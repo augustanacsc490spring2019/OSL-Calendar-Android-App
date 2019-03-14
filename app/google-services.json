@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "559059413195",
+    "firebase_url": "https://osl-events-app.firebaseio.com",
+    "project_id": "osl-events-app",
+    "storage_bucket": "osl-events-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:559059413195:android:27f2d61187a00f38",
+        "android_client_info": {
+          "package_name": "edu.augustana.osleventsandroid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "559059413195-kc0din44sr01g9opm9nnnb3ve06mvrcq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCd_sydusdVLPZAXKDbWf-dDUhISt5QNBQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
