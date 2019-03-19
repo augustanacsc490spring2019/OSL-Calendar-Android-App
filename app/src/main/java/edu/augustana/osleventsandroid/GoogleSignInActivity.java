@@ -74,7 +74,8 @@ public class GoogleSignInActivity extends AppCompatActivity {
         setContentView(R.layout.google_sign_in);
         authStateListener = new FirebaseAuth.AuthStateListener() {
             /**
-             * Handles users signing in, if the email is an Augustana College Email it signs them in and launches Google Maps activity
+             * Handles
+             * users signing in, if the email is an Augustana College Email it signs them in and launches Google Maps activity
              * If the email is not an Augustana email address it displays a toast and does not sign them in
              *
              * @param firebaseAuth - User account attempting to sign in
