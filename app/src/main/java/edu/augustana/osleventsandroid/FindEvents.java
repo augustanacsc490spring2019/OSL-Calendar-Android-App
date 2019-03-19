@@ -25,6 +25,7 @@ public class FindEvents extends AppCompatActivity {
                     return true;
                 case R.id.navigation_dashboard:
                     mTextMessage.setText(R.string.title_dashboard);
+                    startActivity(new Intent(FindEvents.this, QrCodeScanner.class));
                     return true;
                 case R.id.navigation_notifications:
                     mTextMessage.setText(R.string.title_notifications);
