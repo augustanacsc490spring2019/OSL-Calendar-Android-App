@@ -3,10 +3,10 @@ package edu.augustana.osleventsandroid;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-
 import com.google.zxing.Result;
-
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
+
+// Source: https://stackoverflow.com/questions/8831050/android-how-to-read-qr-code-in-my-application
 
 public class QrCodeScanner extends AppCompatActivity implements ZXingScannerView.ResultHandler {
     private ZXingScannerView mScannerView;
