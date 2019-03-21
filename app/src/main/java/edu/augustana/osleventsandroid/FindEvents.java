@@ -13,6 +13,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +31,8 @@ public class FindEvents extends AppCompatActivity {
     private TextView mTextMessage;
     private ListView eventslv;
     private BottomNavigationView navigation;
+    private ArrayList<Event> events;
+    private CustomLVAdapter customLVAdapter;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -37,12 +40,14 @@ public class FindEvents extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.navigation_home:
+                case R.id.navigation_search:
+                    moveToSearch();
                     return true;
-                case R.id.navigation_dashboard:
+                case R.id.navigation_scanQR:
                     moveToQR();
                     return true;
-                case R.id.navigation_notifications:
+                case R.id.navigation_settings:
+                    moveToSettings();
                     return true;
             }
             return false;
@@ -54,7 +59,7 @@ public class FindEvents extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_events);
         eventslv=(ListView) findViewById(R.id.listViewEvents);
-        ArrayList<Event> events=new ArrayList<Event>();
+        events=new ArrayList<Event>();
         ArrayList<String> tag=new ArrayList<String>();
         tag.add("bingo");
         Event event1=new Event("Bingo", "Gavle 3",new Date(2019, 3, 30, 7, 30), "OSL", "OSL", tag,R.drawable.augustanatest );
@@ -69,10 +74,14 @@ public class FindEvents extends AppCompatActivity {
         events.add(event4);
         events.add(event5);
         events.add(event6);
-        CustomLVAdapter customLVAdapter=new CustomLVAdapter(this, events);
+        customLVAdapter=new CustomLVAdapter(this, events);
         eventslv.setAdapter(customLVAdapter);
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+    }
+
+    public void moveToSearch() {
+        eventslv.setVisibility(View.VISIBLE);
     }
 
     // Source: https://stackoverflow.com/questions/42275906/how-to-ask-runtime-permissions-for-camera
@@ -84,10 +93,14 @@ public class FindEvents extends AppCompatActivity {
         }
     }
 
+    public void moveToSettings() {
+        eventslv.setVisibility(View.GONE);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == QRCODE) {
-            navigation.setSelectedItemId(R.id.navigation_home);
+            navigation.setSelectedItemId(R.id.navigation_search);
             if (resultCode == RESULT_OK) {
                 System.out.println(data);
             }
