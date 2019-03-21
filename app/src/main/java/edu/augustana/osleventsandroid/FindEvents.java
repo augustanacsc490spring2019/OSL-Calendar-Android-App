@@ -88,6 +88,9 @@ public class FindEvents extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == QRCODE) {
             navigation.setSelectedItemId(R.id.navigation_home);
+            if (resultCode == RESULT_OK) {
+                System.out.println(data);
+            }
         }
     }
 
