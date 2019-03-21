@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -82,6 +83,16 @@ public class FindEvents extends AppCompatActivity {
         events.add(event6);
         customLVAdapter=new CustomLVAdapter(this, events);
         eventslv.setAdapter(customLVAdapter);
+        eventslv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView adapter, View v, int position, long arg3) {
+                Event choosenEvent = events.get(position);
+                Intent intent = new Intent(FindEvents.this, SingleEventPage.class);
+                intent.putExtra("choosenEvent",choosenEvent);
+                startActivity(intent);
+
+            }
+        });
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }

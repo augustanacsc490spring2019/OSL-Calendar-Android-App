@@ -1,11 +1,12 @@
 package edu.augustana.osleventsandroid;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Event {
+public class Event implements Serializable {
     private String name;
     private String location;
     private Date date;
