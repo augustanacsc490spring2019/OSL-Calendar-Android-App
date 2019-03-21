@@ -31,7 +31,8 @@ public class SingleEventPage extends AppCompatActivity {
     }
 
     public void notifyBtnAction(View v){
-
+        Event event = (Event) getIntent().getSerializableExtra("choosenEvent");
+        Notification note = new Notification(event.getFormatedDate(),event.getFormatedTime(),event.getName());
     }
 
     public void addToCalBtnAction(View v){
