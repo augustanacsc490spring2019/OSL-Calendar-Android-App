@@ -8,6 +8,21 @@
     tools:context="edu.augustana.osleventsandroid.FindEvents"
     tools:layout_editor_absoluteY="81dp">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
+    <!--<item-->
+        <!--android:id="@+id/sort"-->
+        <!--android:icon="@drawable/sort_arrow"-->
+        <!--android:title="Sort Action"-->
+        <!--app:showAsAction="ifRoom"/>-->
+
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"
         android:layout_width="0dp"
@@ -26,8 +41,9 @@
         android:layout_height="match_parent"
         app:layout_constraintBottom_toTopOf="@id/navigation"
         app:layout_constraintEnd_toEndOf="@id/navigation"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="@id/my_toolbar"
+        app:layout_constraintTop_toTopOf="@id/my_toolbar"
+        android:layout_marginTop="@dimen/fui_min_height_target"
         android:layout_marginBottom="@dimen/fui_min_height_target"/>
 
     <RelativeLayout
@@ -39,8 +55,9 @@
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/navigation"
         app:layout_constraintEnd_toEndOf="@id/navigation"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="@id/my_toolbar"
+        app:layout_constraintTop_toTopOf="@id/my_toolbar"
+        android:layout_marginTop="@dimen/fui_min_height_target"
         android:layout_marginBottom="@dimen/fui_min_height_target">
         <ScrollView
             android:layout_width="match_parent"
@@ -55,6 +72,7 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:text="Settings"
+                    android:layout_marginTop="15sp"
                     android:layout_centerHorizontal="true"
                     android:textSize="20sp"/>
 
