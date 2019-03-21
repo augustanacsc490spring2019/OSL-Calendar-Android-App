@@ -28,6 +28,7 @@ import com.example.osleventsandroid.R;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 public class FindEvents extends AppCompatActivity {
@@ -83,6 +84,8 @@ public class FindEvents extends AppCompatActivity {
         events.add(event4);
         events.add(event5);
         events.add(event6);
+        //Collections.sort(events);
+        Collections.sort(events, new DateSorter());
         customLVAdapter=new CustomLVAdapter(this, events);
         eventslv.setAdapter(customLVAdapter);
         eventslv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
