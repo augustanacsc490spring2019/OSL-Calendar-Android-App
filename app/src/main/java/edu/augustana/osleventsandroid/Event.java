@@ -4,9 +4,10 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 
-public class Event implements Serializable {
+public class Event implements Serializable, Comparable<Event> {
     private String name;
     private String location;
     private Date date;
@@ -22,12 +23,14 @@ public class Event implements Serializable {
     public void setImgid(int imgid) {
         this.imgid = imgid;
     }
-    public String getFormatedDate(){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy");
-        return simpleDateFormat.format(date);
+
+    public String getFormatedDate() {
+        //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy");
+        //return simpleDateFormat.format(date);
+        return date.getMonth() + "-" + date.getDate() + "-" + date.getYear();
     }
 
-    public String getFormatedTime(){
+    public String getFormatedTime() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
         return simpleDateFormat.format(date);
     }
@@ -39,7 +42,7 @@ public class Event implements Serializable {
         this.organization = organization;
         this.type = type;
         this.tags = tags;
-        this.imgid=imgid;
+        this.imgid = imgid;
     }
 
     public String getName() {
@@ -89,4 +92,34 @@ public class Event implements Serializable {
     public void setTags(ArrayList<String> tags) {
         this.tags = tags;
     }
+
+    @Override
+    public int compareTo(Event o) {
+        return this.getName().compareTo(o.getName());
+    }
+
 }
+    class DateSorter implements Comparator<Event>
+    {
+        public int compare(Event o1, Event o2)
+        {
+            return o1.getDate().compareTo(o2.getDate());
+        }
+    }
+
+    class EventTypeSorter implements Comparator<Event>
+    {
+        public int compare(Event o1, Event o2)
+        {
+            return o1.getType().compareTo(o2.getType());
+        }
+    }
+
+    class LocationSorter implements Comparator<Event>
+    {
+        public int compare(Event o1, Event o2)
+        {
+            return o1.getLocation().compareTo(o2.getLocation());
+        }
+    }
+

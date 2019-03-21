@@ -8,6 +8,7 @@
     tools:context="edu.augustana.osleventsandroid.FindEvents"
     tools:layout_editor_absoluteY="81dp">
 
+    <!--https://developer.android.com/training/appbar/setting-up-->
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
@@ -16,12 +17,6 @@
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
-
-    <!--<item-->
-        <!--android:id="@+id/sort"-->
-        <!--android:icon="@drawable/sort_arrow"-->
-        <!--android:title="Sort Action"-->
-        <!--app:showAsAction="ifRoom"/>-->
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"
