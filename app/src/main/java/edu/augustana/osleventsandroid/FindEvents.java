@@ -26,9 +26,10 @@ import java.util.Date;
 
 public class FindEvents extends AppCompatActivity {
 
+    final int QRCODE = 0;
     private TextView mTextMessage;
     private ListView eventslv;
-
+    private BottomNavigationView navigation;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -37,14 +38,11 @@ public class FindEvents extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    //mTextMessage.setText(R.string.title_search);
                     return true;
                 case R.id.navigation_dashboard:
-                   // mTextMessage.setText(R.string.title_scan);
                     moveToQR();
                     return true;
                 case R.id.navigation_notifications:
-                   // mTextMessage.setText(R.string.title_settings);
                     return true;
             }
             return false;
@@ -61,21 +59,35 @@ public class FindEvents extends AppCompatActivity {
         tag.add("bingo");
         Event event1=new Event("Bingo", "Gavle 3",new Date(2019, 3, 30, 7, 30), "OSL", "OSL", tag,R.drawable.augustanatest );
         Event event2=new Event("Comedy Show", "Gavle 1",new Date(2019, 3, 21, 6, 00), "OSL", "OSL", tag,R.drawable.augustanatest );
+        Event event3=new Event("Symphonic Band Concert", "Centeniall Hall",new Date(2019, 3, 30, 7, 30), "Music", "Arts", tag,R.drawable.augustanatest );
+        Event event4=new Event("Movie", "Olin Auditorium",new Date(2019, 3, 21, 6, 00), "OSL", "OSL", tag,R.drawable.augustanatest );
+        Event event5=new Event("PepsiCo", "PepsiCo",new Date(2019, 3, 30, 7, 30), "OSL", "OSL", tag,R.drawable.augustanatest );
+        Event event6=new Event("PepsiCo", "PepsiCo",new Date(2019, 3, 21, 6, 00), "OSL", "OSL", tag,R.drawable.augustanatest );
         events.add(event1);
         events.add(event2);
+        events.add(event3);
+        events.add(event4);
+        events.add(event5);
+        events.add(event6);
         CustomLVAdapter customLVAdapter=new CustomLVAdapter(this, events);
         eventslv.setAdapter(customLVAdapter);
-       // mTextMessage = (TextView) findViewById(R.id.message);
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
     // Source: https://stackoverflow.com/questions/42275906/how-to-ask-runtime-permissions-for-camera
     public void moveToQR() {
         if (checkPermission()) {
-            startActivity(new Intent(FindEvents.this, QrCodeScanner.class));
+            startActivityForResult(new Intent(FindEvents.this, QrCodeScanner.class), QRCODE);
         } else {
             requestPermission();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == QRCODE) {
+            navigation.setSelectedItemId(R.id.navigation_home);
         }
     }
 
