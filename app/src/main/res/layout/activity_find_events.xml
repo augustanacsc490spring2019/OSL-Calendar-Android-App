@@ -48,10 +48,84 @@
                 android:layout_height="match_parent">
 
                 <TextView
+                    android:id="@+id/settingsTitle"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="Settings" />
+                    android:layout_height="wrap_content"
+                    android:text="Settings"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="20sp"/>
 
+                <TextView
+                    android:id="@+id/themeTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Theme"
+                    android:textSize="18sp"
+                    android:layout_below="@id/settingsTitle"/>
+
+                <RadioButton
+                    android:id="@+id/theme1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/themeTitle"/>
+
+                <TextView
+                    android:id="@+id/theme1Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Theme 1"
+                    android:textSize="16sp"
+                    android:layout_alignBottom="@id/theme1"
+                    android:layout_toRightOf="@id/theme1"
+                    android:layout_below="@id/themeTitle"/>
+
+                <RadioButton
+                    android:id="@+id/theme2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/theme1"/>
+
+                <TextView
+                    android:id="@+id/theme2Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Theme 2"
+                    android:textSize="16sp"
+                    android:layout_alignBottom="@id/theme2"
+                    android:layout_toRightOf="@id/theme2"
+                    android:layout_below="@id/theme1Label"/>
+
+                <RadioButton
+                    android:id="@+id/theme3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/theme2"/>
+
+                <TextView
+                    android:id="@+id/theme3Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Theme 3"
+                    android:textSize="16sp"
+                    android:layout_alignBottom="@id/theme3"
+                    android:layout_toRightOf="@id/theme3"
+                    android:layout_below="@id/theme2Label"/>
+
+                <RadioButton
+                    android:id="@+id/theme4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/theme3"/>
+
+                <TextView
+                    android:id="@+id/theme4Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Theme 4"
+                    android:textSize="16sp"
+                    android:layout_alignBottom="@id/theme4"
+                    android:layout_toRightOf="@id/theme4"
+                    android:layout_below="@id/theme3Label"/>
 
             </RelativeLayout>
         </ScrollView>
