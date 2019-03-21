@@ -1,23 +1,44 @@
 package edu.augustana.osleventsandroid;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Event {
     private String name;
     private String location;
-    private LocalDateTime date;
+    private Date date;
     private String organization;
     private String type;
     private ArrayList<String> tags;
+    private int imgid;
 
-    public Event(String name, String location, LocalDateTime date, String organization, String type, ArrayList<String> tags) {
+    public int getImgid() {
+        return imgid;
+    }
+
+    public void setImgid(int imgid) {
+        this.imgid = imgid;
+    }
+    public String getFormatedDate(){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy");
+        return simpleDateFormat.format(date);
+    }
+
+    public String getFormatedTime(){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+        return simpleDateFormat.format(date);
+    }
+
+    public Event(String name, String location, Date date, String organization, String type, ArrayList<String> tags, int imgid) {
         this.name = name;
         this.location = location;
         this.date = date;
         this.organization = organization;
         this.type = type;
         this.tags = tags;
+        this.imgid=imgid;
     }
 
     public String getName() {
@@ -36,11 +57,11 @@ public class Event {
         this.location = location;
     }
 
-    public LocalDateTime getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

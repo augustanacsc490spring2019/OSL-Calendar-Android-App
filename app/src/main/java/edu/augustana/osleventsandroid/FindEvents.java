@@ -13,14 +13,22 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.osleventsandroid.R;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
+
 public class FindEvents extends AppCompatActivity {
 
     private TextView mTextMessage;
+    private ListView eventslv;
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -29,14 +37,14 @@ public class FindEvents extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_search);
+                    //mTextMessage.setText(R.string.title_search);
                     return true;
                 case R.id.navigation_dashboard:
-                    mTextMessage.setText(R.string.title_scan);
+                   // mTextMessage.setText(R.string.title_scan);
                     moveToQR();
                     return true;
                 case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.title_settings);
+                   // mTextMessage.setText(R.string.title_settings);
                     return true;
             }
             return false;
@@ -47,8 +55,17 @@ public class FindEvents extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_events);
-
-        mTextMessage = (TextView) findViewById(R.id.message);
+        eventslv=(ListView) findViewById(R.id.listViewEvents);
+        ArrayList<Event> events=new ArrayList<Event>();
+        ArrayList<String> tag=new ArrayList<String>();
+        tag.add("bingo");
+        Event event1=new Event("Bingo", "Gavle 3",new Date(2019, 3, 30, 7, 30), "OSL", "OSL", tag,R.drawable.augustanatest );
+        Event event2=new Event("Comedy Show", "Gavle 1",new Date(2019, 3, 21, 6, 00), "OSL", "OSL", tag,R.drawable.augustanatest );
+        events.add(event1);
+        events.add(event2);
+        CustomLVAdapter customLVAdapter=new CustomLVAdapter(this, events);
+        eventslv.setAdapter(customLVAdapter);
+       // mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
