@@ -34,6 +34,8 @@
         android:id="@+id/settingsView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginLeft="10sp"
+        android:layout_marginRight="10sp"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/navigation"
         app:layout_constraintEnd_toEndOf="@id/navigation"
@@ -51,6 +53,7 @@
                     android:id="@+id/settingsTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textStyle="bold"
                     android:text="Settings"
                     android:layout_centerHorizontal="true"
                     android:textSize="20sp"/>
@@ -63,69 +66,49 @@
                     android:textSize="18sp"
                     android:layout_below="@id/settingsTitle"/>
 
+                <RadioGroup
+                    android:id="@+id/radioGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/themeTitle">
+
                 <RadioButton
                     android:id="@+id/theme1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/themeTitle"/>
-
-                <TextView
-                    android:id="@+id/theme1Label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:text="Theme 1"
-                    android:textSize="16sp"
-                    android:layout_alignBottom="@id/theme1"
-                    android:layout_toRightOf="@id/theme1"
-                    android:layout_below="@id/themeTitle"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
                 <RadioButton
                     android:id="@+id/theme2"
+                    android:text="Theme 2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/theme1"/>
 
-                <TextView
-                    android:id="@+id/theme2Label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Theme 2"
-                    android:textSize="16sp"
-                    android:layout_alignBottom="@id/theme2"
-                    android:layout_toRightOf="@id/theme2"
-                    android:layout_below="@id/theme1Label"/>
-
                 <RadioButton
                     android:id="@+id/theme3"
+                    android:text="Theme 3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/theme2"/>
 
-                <TextView
-                    android:id="@+id/theme3Label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Theme 3"
-                    android:textSize="16sp"
-                    android:layout_alignBottom="@id/theme3"
-                    android:layout_toRightOf="@id/theme3"
-                    android:layout_below="@id/theme2Label"/>
-
                 <RadioButton
                     android:id="@+id/theme4"
+                    android:text="Theme 4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/theme3"/>
 
-                <TextView
-                    android:id="@+id/theme4Label"
-                    android:layout_width="wrap_content"
+                </RadioGroup>
+
+                <Button
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Theme 4"
-                    android:textSize="16sp"
-                    android:layout_alignBottom="@id/theme4"
-                    android:layout_toRightOf="@id/theme4"
-                    android:layout_below="@id/theme3Label"/>
+                    android:layout_marginLeft="10sp"
+                    android:layout_marginRight="10sp"
+                    android:text="Sign Out"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/radioGroup" />
 
             </RelativeLayout>
         </ScrollView>
