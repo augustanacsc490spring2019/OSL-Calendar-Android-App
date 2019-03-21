@@ -30,4 +30,31 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginBottom="@dimen/fui_min_height_target"/>
 
+    <RelativeLayout
+        android:id="@+id/settingsView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/navigation"
+        app:layout_constraintEnd_toEndOf="@id/navigation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginBottom="@dimen/fui_min_height_target">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Settings" />
+
+
+            </RelativeLayout>
+        </ScrollView>
+    </RelativeLayout>
+
 </android.support.constraint.ConstraintLayout>

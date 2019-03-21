@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +31,7 @@ public class FindEvents extends AppCompatActivity {
     final int QRCODE = 0;
     private TextView mTextMessage;
     private ListView eventslv;
+    private RelativeLayout settingsView;
     private BottomNavigationView navigation;
     private ArrayList<Event> events;
     private CustomLVAdapter customLVAdapter;
@@ -59,6 +61,7 @@ public class FindEvents extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_events);
         eventslv=(ListView) findViewById(R.id.listViewEvents);
+        settingsView=(RelativeLayout) findViewById(R.id.settingsView);
         events=new ArrayList<Event>();
         ArrayList<String> tag=new ArrayList<String>();
         tag.add("bingo");
@@ -81,6 +84,7 @@ public class FindEvents extends AppCompatActivity {
     }
 
     public void moveToSearch() {
+        settingsView.setVisibility(View.GONE);
         eventslv.setVisibility(View.VISIBLE);
     }
 
@@ -95,6 +99,7 @@ public class FindEvents extends AppCompatActivity {
 
     public void moveToSettings() {
         eventslv.setVisibility(View.GONE);
+        settingsView.setVisibility(View.VISIBLE);
     }
 
     @Override
