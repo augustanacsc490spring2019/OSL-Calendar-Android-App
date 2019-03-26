@@ -72,12 +72,12 @@ public class FindEvents extends AppCompatActivity {
         events=new ArrayList<Event>();
         ArrayList<String> tag=new ArrayList<String>();
         tag.add("bingo");
-        Event event1=new Event("Bingo", "Gavle 3",new Date(2019, 3, 30, 7, 30), "OSL", "OSL", tag,R.drawable.augustanatest );
-        Event event2=new Event("Comedy Show", "Gavle 1",new Date(2019, 3, 21, 6, 00), "OSL", "OSL", tag,R.drawable.augustanatest );
-        Event event3=new Event("Symphonic Band Concert", "Centeniall Hall",new Date(2019, 3, 30, 7, 30), "Music", "Arts", tag,R.drawable.augustanatest );
-        Event event4=new Event("Movie", "Olin Auditorium",new Date(2019, 3, 21, 6, 00), "OSL", "OSL", tag,R.drawable.augustanatest );
-        Event event5=new Event("PepsiCo", "PepsiCo",new Date(2019, 3, 30, 7, 30), "OSL", "OSL", tag,R.drawable.augustanatest );
-        Event event6=new Event("PepsiCo", "PepsiCo",new Date(2019, 3, 21, 6, 00), "OSL", "OSL", tag,R.drawable.augustanatest );
+        Event event1=new Event("Bingo", "Gavle 3",new Date(2019, 3, 30, 7, 30), "OSL", "OSL",tag,"win bingo",R.drawable.augustanatest );
+        Event event2=new Event("Comedy Show", "Gavle 1",new Date(2019, 3, 21, 6, 00), "OSL", "OSL",  tag,"hahah", R.drawable.augustanatest );
+        Event event3=new Event("Symphonic Band Concert", "Centeniall Hall",new Date(2019, 3, 30, 7, 30), "Music", "Arts", tag,"music", R.drawable.augustanatest );
+        Event event4=new Event("Movie", "Olin Auditorium",new Date(2019, 3, 21, 6, 00), "OSL", "OSL", tag,"movie",R.drawable.augustanatest );
+        Event event5=new Event("PepsiCo", "PepsiCo",new Date(2019, 3, 30, 7, 30), "OSL", "OSL", tag,"Gainzzzz",R.drawable.augustanatest );
+        Event event6=new Event("PepsiCo", "PepsiCo",new Date(2019, 3, 21, 6, 00), "OSL", "OSL", tag,"Gainzzz",R.drawable.augustanatest );
         events.add(event1);
         events.add(event2);
         events.add(event3);
