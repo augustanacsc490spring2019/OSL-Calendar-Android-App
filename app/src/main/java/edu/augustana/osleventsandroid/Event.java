@@ -14,6 +14,7 @@ public class Event implements Serializable, Comparable<Event> {
     private String organization;
     private String type;
     private ArrayList<String> tags;
+    private String description;
     private int imgid;
 
     public int getImgid() {
@@ -35,7 +36,15 @@ public class Event implements Serializable, Comparable<Event> {
         return simpleDateFormat.format(date);
     }
 
-    public Event(String name, String location, Date date, String organization, String type, ArrayList<String> tags, int imgid) {
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Event(String name, String location, Date date, String organization, String type, ArrayList<String> tags, String description, int imgid) {
         this.name = name;
         this.location = location;
         this.date = date;
@@ -43,6 +52,7 @@ public class Event implements Serializable, Comparable<Event> {
         this.type = type;
         this.tags = tags;
         this.imgid = imgid;
+        this.description=description;
     }
 
     public String getName() {
