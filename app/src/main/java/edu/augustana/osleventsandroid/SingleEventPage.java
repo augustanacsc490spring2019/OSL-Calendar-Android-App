@@ -65,7 +65,7 @@ public class SingleEventPage extends AppCompatActivity {
                             //need to change this to start time and end time still, date isnt working
 
                             .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime.getTimeInMillis())
-
+                            .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, startTime.getTimeInMillis()+event.getDuration()*60*1000)
                             .putExtra(CalendarContract.Events.TITLE, event.getName())
                             .putExtra(CalendarContract.Events.DESCRIPTION, event.getDescription())
                             .putExtra(CalendarContract.Events.EVENT_LOCATION, event.getLocation())
@@ -78,7 +78,7 @@ public class SingleEventPage extends AppCompatActivity {
                     intent.putExtra("beginTime", cal.getTimeInMillis());
                    // intent.putExtra("allDay", true);
                     intent.putExtra("rrule", "FREQ=YEARLY");
-                    intent.putExtra("endTime", cal.getTimeInMillis() + event.getDuration());
+                    intent.putExtra("endTime", cal.getTimeInMillis() + event.getDuration()*60*1000);
                     //intent.putExtra("title", "A Test Event from android app");
                     startActivity(intent);
                 }
