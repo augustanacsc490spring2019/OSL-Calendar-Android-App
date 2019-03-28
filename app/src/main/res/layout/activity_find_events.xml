@@ -16,7 +16,7 @@
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"
@@ -30,33 +30,44 @@
         app:layout_constraintRight_toRightOf="parent"
         app:menu="@menu/navigation" />
 
+  <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+      <ProgressBar
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_centerHorizontal="true"
+          android:layout_centerVertical="true"/>
+  </RelativeLayout>
     <ListView
         android:id="@+id/listViewEvents"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/fui_min_height_target"
+        android:layout_marginBottom="@dimen/fui_min_height_target"
         app:layout_constraintBottom_toTopOf="@id/navigation"
         app:layout_constraintEnd_toEndOf="@id/navigation"
         app:layout_constraintStart_toStartOf="@id/my_toolbar"
-        app:layout_constraintTop_toTopOf="@id/my_toolbar"
-        android:layout_marginTop="@dimen/fui_min_height_target"
-        android:layout_marginBottom="@dimen/fui_min_height_target"/>
+        app:layout_constraintTop_toTopOf="@id/my_toolbar" />
 
     <RelativeLayout
         android:id="@+id/settingsView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="10sp"
+        android:layout_marginTop="@dimen/fui_min_height_target"
         android:layout_marginRight="10sp"
+        android:layout_marginBottom="@dimen/fui_min_height_target"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/navigation"
         app:layout_constraintEnd_toEndOf="@id/navigation"
         app:layout_constraintStart_toStartOf="@id/my_toolbar"
-        app:layout_constraintTop_toTopOf="@id/my_toolbar"
-        android:layout_marginTop="@dimen/fui_min_height_target"
-        android:layout_marginBottom="@dimen/fui_min_height_target">
+        app:layout_constraintTop_toTopOf="@id/my_toolbar">
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -65,19 +76,19 @@
                     android:id="@+id/settingsTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:text="Settings"
-                    android:layout_marginTop="15sp"
                     android:layout_centerHorizontal="true"
-                    android:textSize="20sp"/>
+                    android:layout_marginTop="15sp"
+                    android:text="Settings"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/themeTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_below="@id/settingsTitle"
                     android:text="Theme"
-                    android:textSize="18sp"
-                    android:layout_below="@id/settingsTitle"/>
+                    android:textSize="18sp" />
 
                 <RadioGroup
                     android:id="@+id/radioGroup"
@@ -85,43 +96,43 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/themeTitle">
 
-                <RadioButton
-                    android:id="@+id/theme1"
-                    android:text="Theme 1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    <RadioButton
+                        android:id="@+id/theme1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Theme 1" />
 
-                <RadioButton
-                    android:id="@+id/theme2"
-                    android:text="Theme 2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/theme1"/>
+                    <RadioButton
+                        android:id="@+id/theme2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/theme1"
+                        android:text="Theme 2" />
 
-                <RadioButton
-                    android:id="@+id/theme3"
-                    android:text="Theme 3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/theme2"/>
+                    <RadioButton
+                        android:id="@+id/theme3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/theme2"
+                        android:text="Theme 3" />
 
-                <RadioButton
-                    android:id="@+id/theme4"
-                    android:text="Theme 4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/theme3"/>
+                    <RadioButton
+                        android:id="@+id/theme4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/theme3"
+                        android:text="Theme 4" />
 
                 </RadioGroup>
 
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_below="@id/radioGroup"
+                    android:layout_centerHorizontal="true"
                     android:layout_marginLeft="10sp"
                     android:layout_marginRight="10sp"
-                    android:text="Sign Out"
-                    android:layout_centerHorizontal="true"
-                    android:layout_below="@id/radioGroup" />
+                    android:text="Sign Out" />
 
             </RelativeLayout>
         </ScrollView>

@@ -24,6 +24,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.osleventsandroid.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,6 +45,7 @@ public class FindEvents extends AppCompatActivity {
     private BottomNavigationView navigation;
     private ArrayList<Event> events;
     private CustomLVAdapter customLVAdapter;
+    private DatabaseReference database;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -67,37 +73,30 @@ public class FindEvents extends AppCompatActivity {
         setContentView(R.layout.activity_find_events);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        database=FirebaseDatabase.getInstance().getReference("current-events");
+
+
         eventslv=(ListView) findViewById(R.id.listViewEvents);
         settingsView=(RelativeLayout) findViewById(R.id.settingsView);
         events=new ArrayList<Event>();
-        ArrayList<String> tag=new ArrayList<String>();
-        tag.add("bingo");
-        Event event1=new Event("Bingo", "Gavle 3",new Date(2019, 3, 30, 7, 30), "OSL", "OSL",tag,"win bingo",R.drawable.augustanatest );
-        Event event2=new Event("Comedy Show", "Gavle 1",new Date(2019, 3, 21, 6, 00), "OSL", "OSL",  tag,"hahah", R.drawable.augustanatest );
-        Event event3=new Event("Symphonic Band Concert", "Centeniall Hall",new Date(2019, 3, 30, 7, 30), "Music", "Arts", tag,"music", R.drawable.augustanatest );
-        Event event4=new Event("Movie", "Olin Auditorium",new Date(2019, 3, 21, 6, 00), "OSL", "OSL", tag,"movie",R.drawable.augustanatest );
-        Event event5=new Event("PepsiCo", "PepsiCo",new Date(2019, 3, 30, 7, 30), "OSL", "OSL", tag,"Gainzzzz",R.drawable.augustanatest );
-        Event event6=new Event("PepsiCo", "PepsiCo",new Date(2019, 3, 21, 6, 00), "OSL", "OSL", tag,"Gainzzz",R.drawable.augustanatest );
-        events.add(event1);
-        events.add(event2);
-        events.add(event3);
-        events.add(event4);
-        events.add(event5);
-        events.add(event6);
+        databaseListener();
+        //ArrayList<String> tag=new ArrayList<String>();
+       // tag.add("bingo");
+//        Event event1=new Event("Bingo", "Gavle 3",new Date(2019, 3, 30, 7, 30), "OSL", "OSL",tag,"win bingo",R.drawable.augustanatest );
+//        Event event2=new Event("Comedy Show", "Gavle 1",new Date(2019, 3, 21, 6, 00), "OSL", "OSL",  tag,"hahah", R.drawable.augustanatest );
+//        Event event3=new Event("Symphonic Band Concert", "Centeniall Hall",new Date(2019, 3, 30, 7, 30), "Music", "Arts", tag,"music", R.drawable.augustanatest );
+//        Event event4=new Event("Movie", "Olin Auditorium",new Date(2019, 3, 21, 6, 00), "OSL", "OSL", tag,"movie",R.drawable.augustanatest );
+//        Event event5=new Event("PepsiCo", "PepsiCo",new Date(2019, 3, 30, 7, 30), "OSL", "OSL", tag,"Gainzzzz",R.drawable.augustanatest );
+//        Event event6=new Event("PepsiCo", "PepsiCo",new Date(2019, 3, 21, 6, 00), "OSL", "OSL", tag,"Gainzzz",R.drawable.augustanatest );
+//        events.add(event1);
+//        events.add(event2);
+//        events.add(event3);
+//        events.add(event4);
+//        events.add(event5);
+//        events.add(event6);
         //Collections.sort(events);
-        Collections.sort(events, new DateSorter());
-        customLVAdapter=new CustomLVAdapter(this, events);
-        eventslv.setAdapter(customLVAdapter);
-        eventslv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView adapter, View v, int position, long arg3) {
-                Event choosenEvent = events.get(position);
-                Intent intent = new Intent(FindEvents.this, SingleEventPage.class);
-                intent.putExtra("choosenEvent",choosenEvent);
-                startActivity(intent);
+       // Collections.sort(events, new DateSorter());
 
-            }
-        });
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
@@ -204,6 +203,45 @@ public class FindEvents extends AppCompatActivity {
                 .setNegativeButton("Cancel", null)
                 .create()
                 .show();
+    }
+
+    public void databaseListener(){
+        database.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot: dataSnapshot.getChildren()){
+                   // Event event= snapshot.getValue(Event.class);
+                    String name=snapshot.child("name").getValue().toString();
+                    String date=snapshot.child("date").getValue().toString();
+                    String location=snapshot.child("location").getValue().toString();
+                    String organization=snapshot.child("organization").getValue().toString();
+                    String type=snapshot.child("type").getValue().toString();
+                    String tags=snapshot.child("tags").getValue().toString();
+                    String description=snapshot.child("description").getValue().toString();
+                    String imgid=snapshot.child("imgid").getValue().toString();
+                    Event event=new Event(name,location, date, organization, type, tags, description,imgid);
+                    events.add(event);
+                }
+                customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
+                eventslv.setAdapter(customLVAdapter);
+                eventslv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView adapter, View v, int position, long arg3) {
+                        Event choosenEvent = events.get(position);
+                        Intent intent = new Intent(FindEvents.this, SingleEventPage.class);
+                        intent.putExtra("choosenEvent",choosenEvent);
+                        startActivity(intent);
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
 }

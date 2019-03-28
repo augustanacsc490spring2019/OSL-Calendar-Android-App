@@ -10,41 +10,13 @@ import java.util.Date;
 public class Event implements Serializable, Comparable<Event> {
     private String name;
     private String location;
-    private Date date;
+    private String date;
     private String organization;
     private String type;
-    private ArrayList<String> tags;
+    private String tags;
     private String description;
-    private int imgid;
-
-    public int getImgid() {
-        return imgid;
-    }
-
-    public void setImgid(int imgid) {
-        this.imgid = imgid;
-    }
-
-    public String getFormatedDate() {
-        //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy");
-        //return simpleDateFormat.format(date);
-        return date.getMonth() + "-" + date.getDate() + "-" + date.getYear();
-    }
-
-    public String getFormatedTime() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
-        return simpleDateFormat.format(date);
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Event(String name, String location, Date date, String organization, String type, ArrayList<String> tags, String description, int imgid) {
+    private String imgid;
+    public Event(String name, String location, String date, String organization, String type, String tags, String description, String imgid) {
         this.name = name;
         this.location = location;
         this.date = date;
@@ -54,6 +26,34 @@ public class Event implements Serializable, Comparable<Event> {
         this.imgid = imgid;
         this.description=description;
     }
+    public String  getImgid() {
+        return imgid;
+    }
+
+    public void setImgid(String imgid) {
+        this.imgid = imgid;
+    }
+
+  //  public String getFormatedDate() {
+        //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy");
+        //return simpleDateFormat.format(date);
+        //return date.getMonth() + "-" + date.getDate() + "-" + date.getYear();
+  //  }
+
+    //public String getFormatedTime() {
+      //  SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+      //  return simpleDateFormat.format(date);
+    //}
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+
 
     public String getName() {
         return name;
@@ -71,11 +71,11 @@ public class Event implements Serializable, Comparable<Event> {
         this.location = location;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
@@ -95,11 +95,11 @@ public class Event implements Serializable, Comparable<Event> {
         this.type = type;
     }
 
-    public ArrayList<String> getTags() {
+    public String getTags() {
         return tags;
     }
 
-    public void setTags(ArrayList<String> tags) {
+    public void setTags(String tags) {
         this.tags = tags;
     }
 

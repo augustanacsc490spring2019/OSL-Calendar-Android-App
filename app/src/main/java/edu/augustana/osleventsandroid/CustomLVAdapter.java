@@ -35,11 +35,11 @@ public class CustomLVAdapter extends ArrayAdapter{
             viewHolder=(ViewHolder) r.getTag();
         }
         Event event=events.get(position);
-        viewHolder.img.setImageResource(event.getImgid());
+        viewHolder.img.setImageResource(R.drawable.augustanatest);
         viewHolder.txtTitle.setText(event.getName());
         viewHolder.txtLocation.setText(event.getLocation());
-        viewHolder.txtDate.setText(event.getFormatedDate());
-        viewHolder.txtTime.setText(event.getFormatedTime());
+        viewHolder.txtDate.setText(event.getDate());
+        viewHolder.txtTime.setText(event.getDate());
         viewHolder.txtType.setText(event.getType());
         return r;
     }

@@ -30,9 +30,9 @@ public class SingleEventPage extends AppCompatActivity {
         this.img=(ImageView) findViewById(R.id.img);
         Event event = (Event) getIntent().getSerializableExtra("choosenEvent");
         txtLocation.setText(event.getLocation());
-        txtDateTime.setText(event.getFormatedDate()+" "+event.getFormatedTime());
+        txtDateTime.setText(event.getDate());
         txtType.setText(event.getType());
-        img.setImageResource(event.getImgid());
+        img.setImageResource(R.drawable.augustanatest);
 
 
         Button btn_calendar = (Button) findViewById(R.id.btn_calendar);
@@ -46,8 +46,8 @@ public class SingleEventPage extends AppCompatActivity {
                     Intent intent = new Intent(Intent.ACTION_INSERT)
                             .setData(CalendarContract.Events.CONTENT_URI)
                             //need to change this to start time and end time still, date isnt working
-                            .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, event.getDate().getTime())
-                            .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, event.getFormatedDate())
+                            .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, event.getDate())
+                            .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, event.getDate())
                             .putExtra(CalendarContract.Events.TITLE, event.getName())
                             .putExtra(CalendarContract.Events.DESCRIPTION, event.getType())
                             .putExtra(CalendarContract.Events.EVENT_LOCATION, event.getLocation())
