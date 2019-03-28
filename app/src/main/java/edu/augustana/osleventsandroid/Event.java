@@ -1,6 +1,7 @@
 package edu.augustana.osleventsandroid;
 
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class Event implements Serializable, Comparable<Event> {
         this.location = location;
         this.date = date;
         this.organization = organization;
+        this.duration=duration;
         this.tags = tags;
         this.imgid = imgid;
         this.description=description;
@@ -71,8 +73,63 @@ public class Event implements Serializable, Comparable<Event> {
     }
 
     public String getStartDate() {
-        //String calDate=date.
-        return date;
+        String[] calDatetime=date.split(" ");
+        return calDatetime[0];
+    }
+
+    public String getStartTime() {
+        String[] calDatetime=date.split(" ");
+        int hour=Integer.parseInt(calDatetime[1].substring(0,2));
+        int min=Integer.parseInt(calDatetime[1].substring(3,5));
+        String ampm="";
+
+        if(hour>=12){
+            ampm="PM";
+        }else {
+            ampm="AM";
+        }
+
+        if(hour==0){
+            hour=12;
+        }else if(hour!=12){
+            hour=hour%12;
+        }
+        String hourStr=hour+"";
+        String minStr=min+"";
+
+        if(min<10){
+            minStr="0"+min;
+        }
+        return hour+":"+minStr+" "+ampm;
+    }
+
+    public String getEndTime(){
+        String[] calDatetime=date.split(" ");
+        int hour=Integer.parseInt(calDatetime[1].substring(0,2))+duration/60;
+        int min=Integer.parseInt(calDatetime[1].substring(3,5))+duration%60;
+        if(min>=60){
+            hour=hour+min/60;
+            min=min%60;
+        }
+        hour=hour%24;
+        String ampm="";
+        if(hour>=12){
+            ampm="PM";
+        }else {
+            ampm="AM";
+        }
+
+        if(hour==0){
+            hour=12;
+        }else if(hour!=12){
+            hour=hour%12;
+        }
+        String minStr=min+"";
+
+        if(min<10){
+            minStr="0"+min;
+        }
+        return hour+":"+minStr+" "+ampm;
     }
 
     public void setDate(String date) {
