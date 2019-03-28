@@ -55,12 +55,10 @@ public class SingleEventPage extends AppCompatActivity {
             public void onClick(View v) {
 
                 Event event = (Event) getIntent().getSerializableExtra("choosenEvent");
-                Date dateOfEvent = new Date();
                 if (Build.VERSION.SDK_INT >= 14) {
-                    Calendar startTime = Calendar.getInstance();
+                    Calendar startTime = event.getCalStart();
                     //TODO: make sure when it connects to firebase, the month is displayed correctly
-                    startTime.set(dateOfEvent.getYear(),dateOfEvent.getMonth(),dateOfEvent.getDate(),
-                            dateOfEvent.getHours(),dateOfEvent.getMinutes());
+
                     //  code used from https:stackoverflow.com/questions/3721963/how-to-add-calendar-events-in-android
                     Intent intent = new Intent(Intent.ACTION_INSERT)
                             .setData(CalendarContract.Events.CONTENT_URI)
@@ -80,7 +78,7 @@ public class SingleEventPage extends AppCompatActivity {
                     intent.putExtra("beginTime", cal.getTimeInMillis());
                    // intent.putExtra("allDay", true);
                     intent.putExtra("rrule", "FREQ=YEARLY");
-                    intent.putExtra("endTime", cal.getTimeInMillis() + 60 * 60 * 1000);
+                    intent.putExtra("endTime", cal.getTimeInMillis() + event.getDuration());
                     //intent.putExtra("title", "A Test Event from android app");
                     startActivity(intent);
                 }

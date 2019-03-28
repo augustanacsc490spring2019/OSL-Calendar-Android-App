@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 
@@ -164,6 +165,19 @@ public class Event implements Serializable, Comparable<Event> {
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+    public Calendar getCalStart(){
+        int month=Integer.parseInt(date.substring(0,2))-1;
+        int day=Integer.parseInt(date.substring(3,5));
+        int year=Integer.parseInt(date.substring(6,10));
+        int hour=Integer.parseInt(date.substring(11,13));
+        int min=Integer.parseInt(date.substring(14,16));
+        Calendar startTime = Calendar.getInstance();
+        //TODO: make sure when it connects to firebase, the month is displayed correctly
+        startTime.set(year,month,day,hour,min);
+
+       return startTime;
+
     }
 }
 
