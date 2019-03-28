@@ -53,7 +53,7 @@
             android:text="Date"/>
 
         <TextView
-            android:id="@+id/txtTime"
+            android:id="@+id/txtDuration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/eventImg"
@@ -64,12 +64,12 @@
             android:text="Time"/>
 
         <TextView
-            android:id="@+id/txtEventType"
+            android:id="@+id/txtOrganization"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/eventImg"
             android:layout_toRightOf="@id/eventImg"
-            android:layout_below="@id/txtTime"
+            android:layout_below="@id/txtDuration"
             android:layout_weight="1"
             android:paddingLeft="15dp"
             android:text="Event type"/>

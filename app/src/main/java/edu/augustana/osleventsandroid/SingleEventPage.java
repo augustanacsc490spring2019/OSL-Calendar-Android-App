@@ -34,8 +34,8 @@ public class SingleEventPage extends AppCompatActivity {
         this.img=(ImageView) findViewById(R.id.img);
         Event event = (Event) getIntent().getSerializableExtra("choosenEvent");
         txtLocation.setText(event.getLocation());
-        txtDateTime.setText(event.getDate());
-        txtType.setText(event.getType());
+        txtDateTime.setText(event.getStartDate());
+        txtType.setText(event.getOrganization());
         img.setImageResource(R.drawable.augustanatest);
 
 
@@ -59,7 +59,7 @@ public class SingleEventPage extends AppCompatActivity {
                             .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime.getTimeInMillis())
 
                             .putExtra(CalendarContract.Events.TITLE, event.getName())
-                            .putExtra(CalendarContract.Events.DESCRIPTION, event.getType())
+                            .putExtra(CalendarContract.Events.DESCRIPTION, event.getDescription())
                             .putExtra(CalendarContract.Events.EVENT_LOCATION, event.getLocation())
                             .putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY);
                     startActivity(intent);

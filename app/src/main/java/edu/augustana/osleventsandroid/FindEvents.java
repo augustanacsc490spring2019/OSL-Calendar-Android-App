@@ -212,14 +212,14 @@ public class FindEvents extends AppCompatActivity {
                 for(DataSnapshot snapshot: dataSnapshot.getChildren()){
                    // Event event= snapshot.getValue(Event.class);
                     String name=snapshot.child("name").getValue().toString();
-                    String date=snapshot.child("date").getValue().toString();
+                    String startDate=snapshot.child("startDate").getValue().toString();
+                    int duration=Integer.parseInt(snapshot.child("duration").getValue().toString());
                     String location=snapshot.child("location").getValue().toString();
                     String organization=snapshot.child("organization").getValue().toString();
-                    String type=snapshot.child("type").getValue().toString();
                     String tags=snapshot.child("tags").getValue().toString();
                     String description=snapshot.child("description").getValue().toString();
                     String imgid=snapshot.child("imgid").getValue().toString();
-                    Event event=new Event(name,location, date, organization, type, tags, description,imgid);
+                    Event event=new Event(name,location, startDate, duration, organization, tags, description,imgid);
                     events.add(event);
                 }
                 customLVAdapter=new CustomLVAdapter(FindEvents.this, events);

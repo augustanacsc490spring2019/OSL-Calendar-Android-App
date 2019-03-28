@@ -11,17 +11,16 @@ public class Event implements Serializable, Comparable<Event> {
     private String name;
     private String location;
     private String date;
+    private int duration;
     private String organization;
-    private String type;
     private String tags;
     private String description;
     private String imgid;
-    public Event(String name, String location, String date, String organization, String type, String tags, String description, String imgid) {
+    public Event(String name, String location, String date, int duration, String organization, String tags, String description, String imgid) {
         this.name = name;
         this.location = location;
         this.date = date;
         this.organization = organization;
-        this.type = type;
         this.tags = tags;
         this.imgid = imgid;
         this.description=description;
@@ -71,7 +70,8 @@ public class Event implements Serializable, Comparable<Event> {
         this.location = location;
     }
 
-    public String getDate() {
+    public String getStartDate() {
+        //String calDate=date.
         return date;
     }
 
@@ -87,13 +87,6 @@ public class Event implements Serializable, Comparable<Event> {
         this.organization = organization;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
 
     public String getTags() {
         return tags;
@@ -108,22 +101,14 @@ public class Event implements Serializable, Comparable<Event> {
         return this.getName().compareTo(o.getName());
     }
 
-}
-    class DateSorter implements Comparator<Event>
-    {
-        public int compare(Event o1, Event o2)
-        {
-            return o1.getDate().compareTo(o2.getDate());
-        }
+    public int getDuration() {
+        return duration;
     }
 
-    class EventTypeSorter implements Comparator<Event>
-    {
-        public int compare(Event o1, Event o2)
-        {
-            return o1.getType().compareTo(o2.getType());
-        }
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
+}
 
     class LocationSorter implements Comparator<Event>
     {

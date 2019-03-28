@@ -38,9 +38,9 @@ public class CustomLVAdapter extends ArrayAdapter{
         viewHolder.img.setImageResource(R.drawable.augustanatest);
         viewHolder.txtTitle.setText(event.getName());
         viewHolder.txtLocation.setText(event.getLocation());
-        viewHolder.txtDate.setText(event.getDate());
-        viewHolder.txtTime.setText(event.getDate());
-        viewHolder.txtType.setText(event.getType());
+        viewHolder.txtDate.setText(event.getStartDate());
+        viewHolder.txtDuration.setText(event.getStartDate());
+        viewHolder.txtOrganization.setText(event.getOrganization());
         return r;
     }
 
@@ -48,15 +48,15 @@ public class CustomLVAdapter extends ArrayAdapter{
         TextView txtTitle;
         TextView txtLocation;
         TextView txtDate;
-        TextView txtTime;
-        TextView txtType;
+        TextView txtDuration;
+        TextView txtOrganization;
         ImageView img;
         ViewHolder(View v){
             this.txtTitle=(TextView) v.findViewById(R.id.txtTitle);
             this.txtLocation=(TextView) v.findViewById(R.id.txtLocation);
             this.txtDate=(TextView) v.findViewById(R.id.txtDate);
-            this.txtTime=(TextView) v.findViewById(R.id.txtTime);
-            this.txtType=(TextView) v.findViewById(R.id.txtEventType);
+            this.txtDuration=(TextView) v.findViewById(R.id.txtDuration);
+            this.txtOrganization=(TextView) v.findViewById(R.id.txtOrganization);
             this.img=(ImageView) v.findViewById(R.id.eventImg);
         }
     }
