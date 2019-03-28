@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.provider.CalendarContract.Events;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -13,7 +14,10 @@ import android.widget.TextView;
 
 import com.example.osleventsandroid.R;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class SingleEventPage extends AppCompatActivity {
     private TextView txtLocation;
@@ -41,13 +45,19 @@ public class SingleEventPage extends AppCompatActivity {
             public void onClick(View v) {
 
                 Event event = (Event) getIntent().getSerializableExtra("choosenEvent");
+                Date dateOfEvent = new Date();
                 if (Build.VERSION.SDK_INT >= 14) {
+                    Calendar startTime = Calendar.getInstance();
+                    //TODO: make sure when it connects to firebase, the month is displayed correctly
+                    startTime.set(dateOfEvent.getYear(),dateOfEvent.getMonth(),dateOfEvent.getDate(),
+                            dateOfEvent.getHours(),dateOfEvent.getMinutes());
                     //  code used from https:stackoverflow.com/questions/3721963/how-to-add-calendar-events-in-android
                     Intent intent = new Intent(Intent.ACTION_INSERT)
                             .setData(CalendarContract.Events.CONTENT_URI)
                             //need to change this to start time and end time still, date isnt working
-                            .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, event.getDate())
-                            .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, event.getDate())
+
+                            .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime.getTimeInMillis())
+
                             .putExtra(CalendarContract.Events.TITLE, event.getName())
                             .putExtra(CalendarContract.Events.DESCRIPTION, event.getType())
                             .putExtra(CalendarContract.Events.EVENT_LOCATION, event.getLocation())
