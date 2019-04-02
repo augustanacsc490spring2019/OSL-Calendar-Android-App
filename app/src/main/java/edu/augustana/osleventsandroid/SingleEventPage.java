@@ -55,7 +55,6 @@ public class SingleEventPage extends AppCompatActivity {
             public void onClick(View v) {
 
                 Event event = (Event) getIntent().getSerializableExtra("choosenEvent");
-                if (Build.VERSION.SDK_INT >= 14) {
                     Calendar startTime = event.getCalStart();
                     //TODO: make sure when it connects to firebase, the month is displayed correctly
 
@@ -63,7 +62,6 @@ public class SingleEventPage extends AppCompatActivity {
                     Intent intent = new Intent(Intent.ACTION_INSERT)
                             .setData(CalendarContract.Events.CONTENT_URI)
                             //need to change this to start time and end time still, date isnt working
-
                             .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime.getTimeInMillis())
                             .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, startTime.getTimeInMillis()+event.getDuration()*60*1000)
                             .putExtra(CalendarContract.Events.TITLE, event.getName())
@@ -71,17 +69,6 @@ public class SingleEventPage extends AppCompatActivity {
                             .putExtra(CalendarContract.Events.EVENT_LOCATION, event.getLocation())
                             .putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY);
                     startActivity(intent);
-                } else {
-                    Calendar cal = Calendar.getInstance();
-                    Intent intent = new Intent(Intent.ACTION_EDIT);
-                    intent.setType("vnd.android.cursor.item/event");
-                    intent.putExtra("beginTime", cal.getTimeInMillis());
-                   // intent.putExtra("allDay", true);
-                    intent.putExtra("rrule", "FREQ=YEARLY");
-                    intent.putExtra("endTime", cal.getTimeInMillis() + event.getDuration()*60*1000);
-                    //intent.putExtra("title", "A Test Event from android app");
-                    startActivity(intent);
-                }
 
             }
         });
