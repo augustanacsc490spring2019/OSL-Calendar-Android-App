@@ -1,6 +1,7 @@
 package edu.augustana.osleventsandroid;
 
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.CalendarContract;
@@ -46,7 +47,7 @@ public class SingleEventPage extends AppCompatActivity {
         txtTime.setText("Time: "+event.getStartTime()+"-"+event.getEndTime());
         txtOrganization.setText("Organization: "+event.getOrganization());
         txtDescription.setText("Description: "+event.getDescription());
-        img.setImageResource(R.drawable.augustanatest);
+        img.setImageBitmap(BitmapFactory.decodeByteArray(event.getImg(),0,event.getImg().length));
 
 
         Button btn_calendar = (Button) findViewById(R.id.btn_calendar);

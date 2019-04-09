@@ -1,5 +1,18 @@
 package edu.augustana.osleventsandroid;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
+import android.support.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -17,24 +30,24 @@ public class Event implements Serializable, Comparable<Event> {
     private String organization;
     private String tags;
     private String description;
-    private String imgid;
-    public Event(String name, String location, String date, int duration, String organization, String tags, String description, String imgid) {
+    private  byte[] img;
+    private FirebaseStorage storage;
+    public Event(String name, String location, String date, int duration, String organization, String tags, String description, byte[] img) throws IOException {
         this.name = name;
         this.location = location;
         this.date = date;
         this.organization = organization;
         this.duration=duration;
         this.tags = tags;
-        this.imgid = imgid;
+        this.img=img;
         this.description=description;
     }
-    public String  getImgid() {
-        return imgid;
+    public byte[] getImg() {
+        return img;
     }
 
-    public void setImgid(String imgid) {
-        this.imgid = imgid;
-    }
+
+
 
   //  public String getFormatedDate() {
         //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy");

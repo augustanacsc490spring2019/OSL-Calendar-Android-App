@@ -24,12 +24,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.osleventsandroid.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.IOException;
+import java.nio.file.FileStore;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -46,6 +52,7 @@ public class FindEvents extends AppCompatActivity {
     private ArrayList<Event> events;
     private CustomLVAdapter customLVAdapter;
     private DatabaseReference database;
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -211,29 +218,49 @@ public class FindEvents extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot snapshot: dataSnapshot.getChildren()){
                    // Event event= snapshot.getValue(Event.class);
-                    String name=snapshot.child("name").getValue().toString();
-                    String startDate=snapshot.child("startDate").getValue().toString();
-                    int duration=Integer.parseInt(snapshot.child("duration").getValue().toString());
-                    String location=snapshot.child("location").getValue().toString();
-                    String organization=snapshot.child("organization").getValue().toString();
-                    String tags=snapshot.child("tags").getValue().toString();
-                    String description=snapshot.child("description").getValue().toString();
+                    final String name=snapshot.child("name").getValue().toString();
+                    final String startDate=snapshot.child("startDate").getValue().toString();
+                    final int duration=Integer.parseInt(snapshot.child("duration").getValue().toString());
+                    final String location=snapshot.child("location").getValue().toString();
+                    final String organization=snapshot.child("organization").getValue().toString();
+                    final String tags=snapshot.child("tags").getValue().toString();
+                    final String description=snapshot.child("description").getValue().toString();
                     String imgid=snapshot.child("imgid").getValue().toString();
-                    Event event=new Event(name,location, startDate, duration, organization, tags, description,imgid);
-                    events.add(event);
-                }
-                customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
-                eventslv.setAdapter(customLVAdapter);
-                eventslv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView adapter, View v, int position, long arg3) {
-                        Event choosenEvent = events.get(position);
-                        Intent intent = new Intent(FindEvents.this, SingleEventPage.class);
-                        intent.putExtra("choosenEvent",choosenEvent);
-                        startActivity(intent);
+                    StorageReference storage = FirebaseStorage.getInstance().getReference().child("Images").child(imgid+".jpg");
+                    final long ONE_MEGABYTE = 1024 * 1024;
+                    storage.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            Event event= null;
+                            try {
+                                event = new Event(name,location, startDate, duration, organization, tags, description,bytes);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            events.add(event);
+                            customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
+                            eventslv.setAdapter(customLVAdapter);
+                            eventslv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView adapter, View v, int position, long arg3) {
+                                    Event choosenEvent = events.get(position);
+                                    Intent intent = new Intent(FindEvents.this, SingleEventPage.class);
+                                    intent.putExtra("choosenEvent",choosenEvent);
+                                    startActivity(intent);
 
-                    }
-                });
+                                }
+                            });
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle any errors
+                        }
+                    });
+
+
+                }
 
             }
 

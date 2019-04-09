@@ -1,6 +1,7 @@
 package edu.augustana.osleventsandroid;
 
 import android.app.Activity;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +36,7 @@ public class CustomLVAdapter extends ArrayAdapter{
             viewHolder=(ViewHolder) r.getTag();
         }
         Event event=events.get(position);
-        viewHolder.img.setImageResource(R.drawable.augustanatest);
+        viewHolder.img.setImageBitmap(BitmapFactory.decodeByteArray(event.getImg(),0,event.getImg().length));
         viewHolder.txtTitle.setText(event.getName());
         viewHolder.txtLocation.setText(event.getLocation());
         viewHolder.txtDate.setText(event.getStartDate());
@@ -58,6 +59,7 @@ public class CustomLVAdapter extends ArrayAdapter{
             this.txtDuration=(TextView) v.findViewById(R.id.txtDuration);
             this.txtOrganization=(TextView) v.findViewById(R.id.txtOrganization);
             this.img=(ImageView) v.findViewById(R.id.eventImg);
+
         }
     }
 }
