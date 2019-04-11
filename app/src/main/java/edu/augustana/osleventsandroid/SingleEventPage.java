@@ -41,12 +41,12 @@ public class SingleEventPage extends AppCompatActivity {
 
         this.img=(ImageView) findViewById(R.id.img);
         Event event = (Event) getIntent().getSerializableExtra("choosenEvent");
-        txtName.setText("Name: "+event.getName());
-        txtLocation.setText("Location: "+event.getLocation());
-        txtDate.setText("Date: "+event.getStartDate());
-        txtTime.setText("Time: "+event.getStartTime()+"-"+event.getEndTime());
-        txtOrganization.setText("Organization: "+event.getOrganization());
-        txtDescription.setText("Description: "+event.getDescription());
+        txtName.setText(event.getName());
+        txtLocation.setText(event.getLocation());
+        txtDate.setText(event.getStartDate());
+        txtTime.setText(event.getStartTime()+" - "+event.getEndTime());
+        txtOrganization.setText(event.getOrganization());
+        txtDescription.setText(event.getDescription());
         img.setImageBitmap(BitmapFactory.decodeByteArray(event.getImg(),0,event.getImg().length));
 
 

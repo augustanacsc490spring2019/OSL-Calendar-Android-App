@@ -15,6 +15,17 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         >
+        <TextView
+            android:id="@+id/txt_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name"
+           android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:textSize="32dp"
+            android:textStyle="bold"/>
     <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -38,61 +49,105 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp">
+<TextView
+    android:id="@+id/lbl_location"
+    android:layout_marginTop="10dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="75dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:text="Location:"
+    android:layout_alignBaseline="@id/txt_location"
+    android:textStyle="bold"
+    android:textSize="18dp"/>
         <TextView
-            android:id="@+id/txt_name"
+            android:id="@+id/lbl_Date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Name"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="5dp"/>
+            android:layout_alignLeft="@id/lbl_location"
+            android:text="Date:"
+            android:layout_alignBaseline="@id/txt_date"
+            android:textStyle="bold"
+            android:layout_below="@id/txt_location"
+            android:textSize="18dp"/>
+        <TextView
+            android:id="@+id/lbl_Time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/lbl_location"
+            android:layout_alignBaseline="@id/txt_time"
+            android:text="Time:"
+            android:textStyle="bold"
+            android:layout_below="@id/txt_date"
+            android:textSize="18dp"/>
+        <TextView
+            android:id="@+id/lbl_org"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/lbl_location"
+            android:layout_alignBaseline="@id/txt_organization"
+            android:text="Organization:"
+            android:textStyle="bold"
+            android:layout_below="@id/txt_time"
+            android:textSize="18dp"/>
+        <TextView
+            android:id="@+id/lbl_Descrip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/lbl_location"
+            android:layout_alignBaseline="@id/txt_description"
+            android:text="Description:"
+            android:textStyle="bold"
+            android:layout_below="@id/txt_organization"
+            android:textSize="18dp"/>
         <TextView
             android:id="@+id/txt_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Location"
-            android:layout_below="@id/txt_name"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"/>
+            android:text="Locationskjg;lfdjg;dfkjgdfgjdfklg;dfjgdl;fgjd;fgjdfgjdflgjdf;gjd;fgjdfgjjd;jgdjg;djf"
+            android:layout_toRightOf="@id/lbl_location"
+            android:layout_marginRight="10dp"
+            android:textSize="18dp"/>
         <TextView
             android:id="@+id/txt_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Date"
+            android:text="Datefgdfgdflgjdfklgjdfg;lkdfgjd;fgjdf;lgkjdf;glkjfdljdfkgjdlj"
+            android:layout_alignLeft="@id/txt_location"
             android:layout_below="@id/txt_location"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"/>
+            android:layout_toRightOf="@id/lbl_Date"
+            android:layout_marginRight="10dp"
+            android:textSize="18dp"/>
         <TextView
             android:id="@+id/txt_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Time"
+            android:text="Timesdfjsd;fljd;sfljsdf;sjf;sdjf;sdjf;sdjfs;djfs;djfsdfjsdfs;dfjsdf;sjf;sdljfsljkl"
             android:layout_below="@id/txt_date"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp" />
+            android:layout_alignLeft="@id/txt_location"
+            android:layout_marginRight="10dp"
+            android:textSize="18dp"/>
         <TextView
             android:id="@+id/txt_organization"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Organization"
-            android:layout_centerHorizontal="true"
+            android:text="Organizationcvhlxcvhxclkvhxlvhxcvhxvhxcvkxchvlxchvxlkvhxlvhxclvkhxcvlxhcvxlvhxlvhjx"
             android:layout_below="@id/txt_time"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"/>
+            android:layout_alignLeft="@id/txt_location"
+            android:layout_marginRight="10dp"
+            android:textSize="18dp"
+           />
         <TextView
             android:id="@+id/txt_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Description"
-            android:layout_centerHorizontal="true"
+            android:text="Descriptionchvlvhlxckvhjcxlkvhxclvkjxchlvkxchjvlxckjvxclvhxclvhxcvkxcjhvlxcvhxclkvhjxclvhxclvkjhxclkvjhlxckjh"
             android:layout_below="@id/txt_organization"
-            android:layout_marginLeft="10dp"
+            android:layout_alignLeft="@id/txt_location"
             android:layout_marginRight="10dp"
-            android:layout_marginBottom="5dp"/>
+            android:layout_marginBottom="5dp"
+            android:textSize="18dp"/>
     </RelativeLayout>
         <View
             android:layout_width="match_parent"
