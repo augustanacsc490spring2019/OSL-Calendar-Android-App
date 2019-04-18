@@ -13,11 +13,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name="edu.augustana.osleventsandroid.SingleEventPage"></activity>
+        android:theme="@style/AppTheme">
+        <activity android:name="edu.augustana.osleventsandroid.SingleEventPage"
+            android:label="@string/single_event"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name="edu.augustana.osleventsandroid.FindEvents"
-            android:label="@string/title_activity_find_events" /> <!-- <activity -->
+            android:label="@string/title_activity_find_events"
+            android:screenOrientation="portrait"/> <!-- <activity -->
         <!-- android:name=".SplashActivity" -->
         <!-- android:label="ACES" -->
         <!-- android:theme="@style/SplashTheme"> -->

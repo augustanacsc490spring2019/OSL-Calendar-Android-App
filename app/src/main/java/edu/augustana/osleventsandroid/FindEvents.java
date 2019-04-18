@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,8 +19,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +55,7 @@ public class FindEvents extends AppCompatActivity {
     private ArrayList<Event> events;
     private CustomLVAdapter customLVAdapter;
     private DatabaseReference database;
+    private RelativeLayout progressBar;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -78,14 +82,13 @@ public class FindEvents extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_events);
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
+        progressBar=(RelativeLayout) findViewById(R.id.progressLayout);
+        progressBar.setVisibility(View.VISIBLE);
         database=FirebaseDatabase.getInstance().getReference("current-events");
-
-
         eventslv=(ListView) findViewById(R.id.listViewEvents);
         settingsView=(RelativeLayout) findViewById(R.id.settingsView);
         events=new ArrayList<Event>();
+        customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
         databaseListener();
         //ArrayList<String> tag=new ArrayList<String>();
        // tag.add("bingo");
@@ -127,28 +130,7 @@ public class FindEvents extends AppCompatActivity {
         settingsView.setVisibility(View.VISIBLE);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-//            case R.id.sort:
-//                // User chose the "Sort" item, show the app settings UI...
-//                System.out.println("Do Sort");
-//                return true;
-
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
-
-        }
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -211,11 +193,16 @@ public class FindEvents extends AppCompatActivity {
                 .create()
                 .show();
     }
+    @Override
+    public void onBackPressed(){
+
+    }
 
     public void databaseListener(){
         database.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                events.clear();
                 for(DataSnapshot snapshot: dataSnapshot.getChildren()){
                    // Event event= snapshot.getValue(Event.class);
                     final String name=snapshot.child("name").getValue().toString();
@@ -238,8 +225,10 @@ public class FindEvents extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                             events.add(event);
+                            Collections.sort(events);
                             customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
                             eventslv.setAdapter(customLVAdapter);
+                            progressBar.setVisibility(View.GONE);
                             eventslv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                 @Override
                                 public void onItemClick(AdapterView adapter, View v, int position, long arg3) {
@@ -250,6 +239,7 @@ public class FindEvents extends AppCompatActivity {
 
                                 }
                             });
+
 
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -269,6 +259,56 @@ public class FindEvents extends AppCompatActivity {
 
             }
         });
+
+
+    }
+
+    /**
+     * Adds a drop down for sorting in the top right action bar
+     * @param menu
+     * @return boolean
+     */
+    //https://www.viralandroid.com/2016/03/how-to-add-spinner-dropdown-list-to-android-actionbar-toolbar.html
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.sort_options, menu);
+
+        MenuItem item = menu.findItem(R.id.spinner);
+        Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
+        String[] spinner_list_item_array={"A-Z","Z-A", "Soonest", "Organization"};
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.my_spinner_layout, spinner_list_item_array);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        //https://developer.android.com/guide/topics/ui/controls/spinner.html
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+                if(position==0){
+                    Collections.sort(events);
+                    customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
+                    eventslv.setAdapter(customLVAdapter);
+                }else if(position==1){
+                    Collections.sort(events, Collections.<Event>reverseOrder());
+                    customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
+                    eventslv.setAdapter(customLVAdapter);
+                }else if(position==2){
+                    Collections.sort(events, new DateSorter());
+                    customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
+                    eventslv.setAdapter(customLVAdapter);
+                }else if(position==3){
+                    Collections.sort(events, new OrganizationSorter());
+                    customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
+                    eventslv.setAdapter(customLVAdapter);
+                }
+            }
+
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Another interface callback
+            }
+        });
+
+        return true;
     }
 
 }
