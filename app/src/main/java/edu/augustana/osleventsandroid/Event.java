@@ -202,3 +202,18 @@ public class Event implements Serializable, Comparable<Event> {
         }
     }
 
+class DateSorter implements Comparator<Event>
+{
+    public int compare(Event o1, Event o2)
+    {
+        return o2.getCalStart().compareTo(o1.getCalStart());
+    }
+}
+
+class OrganizationSorter implements Comparator<Event>
+{
+    public int compare(Event o1, Event o2)
+    {
+        return o1.getOrganization().compareTo(o2.getOrganization());
+    }
+}

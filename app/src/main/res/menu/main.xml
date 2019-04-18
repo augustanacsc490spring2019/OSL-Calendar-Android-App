@@ -2,14 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-        <item android:id="@+id/A-Z"
+        <!--<item android:id="@+id/A-Z"
             android:title="A-Z" />
         <item android:id="@+id/Z-A"
             android:title="Z-A" />
         <item android:id="@+id/earliest_Event"
             android:title="Earliest Events" />
         <item android:id="@+id/tags"
-            android:title="Tags" />
+            android:title="Tags" />-->
 
         <!-- Settings, should always be in the overflow -->
         <!--<item android:id="@+id/action_settings"-->

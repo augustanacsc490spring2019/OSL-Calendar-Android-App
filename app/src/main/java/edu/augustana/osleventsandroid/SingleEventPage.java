@@ -14,6 +14,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -60,6 +63,7 @@ public class SingleEventPage extends AppCompatActivity {
         txtTime.setText(event.getStartTime()+" - "+event.getEndTime());
         txtOrganization.setText(event.getOrganization());
         txtDescription.setText(event.getDescription());
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         img.setImageBitmap(BitmapFactory.decodeByteArray(event.getImg(),0,event.getImg().length));
 
 
@@ -165,5 +169,31 @@ public class SingleEventPage extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+
+//            case R.id.sort:
+//                // User chose the "Sort" item, show the app settings UI...
+//                System.out.println("Do Sort");
+//                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
 }
 
