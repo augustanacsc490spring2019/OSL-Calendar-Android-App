@@ -14,13 +14,10 @@ import com.google.firebase.storage.StorageReference;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+
 import java.util.Calendar;
 import java.util.Comparator;
-import java.util.Date;
+
 
 public class Event implements Serializable, Comparable<Event> {
     private String name;

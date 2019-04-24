@@ -119,10 +119,12 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginLeft="10sp"
                     android:layout_marginRight="10sp"
+                    android:onClick="signOutbtn"
                     android:text="Sign Out" />
 
             </RelativeLayout>
         </ScrollView>
     </RelativeLayout>
+
 
 </android.support.constraint.ConstraintLayout>

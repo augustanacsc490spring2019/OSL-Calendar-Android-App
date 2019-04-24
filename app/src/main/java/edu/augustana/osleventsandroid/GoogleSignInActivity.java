@@ -52,6 +52,7 @@ import static android.content.ContentValues.TAG;
 public class GoogleSignInActivity extends AppCompatActivity {
 
     final static int PERMISSION_ALL = 1;
+    public final static int START_ACTIVITY_CODE=2;
     public static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     final static String[] PERMISSIONS = {android.Manifest.permission.ACCESS_COARSE_LOCATION,
             android.Manifest.permission.ACCESS_FINE_LOCATION};  //Permissions for Location Services
@@ -83,7 +84,7 @@ public class GoogleSignInActivity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (firebaseAuth.getCurrentUser() != null && FirebaseAuth.getInstance().getCurrentUser().getEmail().toLowerCase().contains("augustana.edu")) {
-                    startActivity(new Intent(GoogleSignInActivity.this, FindEvents.class));
+                    startActivityForResult(new Intent(GoogleSignInActivity.this, FindEvents.class),START_ACTIVITY_CODE);
                 } else if (firebaseAuth.getCurrentUser() != null && !FirebaseAuth.getInstance().getCurrentUser().getEmail().toLowerCase().contains("augustana.edu")) {
                     signInButton.setEnabled(true);
                     aboutPageButton.setEnabled(true);
@@ -190,6 +191,8 @@ public class GoogleSignInActivity extends AppCompatActivity {
         }
     }
 
+
+
     protected void onStart() {
         super.onStart();
     }
@@ -252,6 +255,10 @@ public class GoogleSignInActivity extends AppCompatActivity {
                 spinner.setVisibility(View.GONE);
                 //TODO: google sign in failed
             }
+        }else if(requestCode ==START_ACTIVITY_CODE){
+            signInButton.setEnabled(true);
+            aboutPageButton.setEnabled(true);
+            spinner.setVisibility(View.GONE);
         }
     }
     //reference for where we learned to implement this: https://developers.google.com/identity/sign-in/android/

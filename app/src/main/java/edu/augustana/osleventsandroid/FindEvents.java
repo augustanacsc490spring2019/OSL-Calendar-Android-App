@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
+import com.google.firebase.auth.FirebaseAuth;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -309,6 +310,11 @@ public class FindEvents extends AppCompatActivity {
         });
 
         return true;
+    }
+
+    public void signOutbtn(View v){
+        FirebaseAuth.getInstance().signOut();
+        finish();
     }
 
 }
