@@ -16,6 +16,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
+
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.firebase.auth.FirebaseAuth;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,6 +59,7 @@ public class FindEvents extends AppCompatActivity {
     private CustomLVAdapter customLVAdapter;
     private DatabaseReference database;
     private RelativeLayout progressBar;
+    private MenuItem item;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -91,23 +94,6 @@ public class FindEvents extends AppCompatActivity {
         events=new ArrayList<Event>();
         customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
         databaseListener();
-        //ArrayList<String> tag=new ArrayList<String>();
-       // tag.add("bingo");
-//        Event event1=new Event("Bingo", "Gavle 3",new Date(2019, 3, 30, 7, 30), "OSL", "OSL",tag,"win bingo",R.drawable.augustanatest );
-//        Event event2=new Event("Comedy Show", "Gavle 1",new Date(2019, 3, 21, 6, 00), "OSL", "OSL",  tag,"hahah", R.drawable.augustanatest );
-//        Event event3=new Event("Symphonic Band Concert", "Centeniall Hall",new Date(2019, 3, 30, 7, 30), "Music", "Arts", tag,"music", R.drawable.augustanatest );
-//        Event event4=new Event("Movie", "Olin Auditorium",new Date(2019, 3, 21, 6, 00), "OSL", "OSL", tag,"movie",R.drawable.augustanatest );
-//        Event event5=new Event("PepsiCo", "PepsiCo",new Date(2019, 3, 30, 7, 30), "OSL", "OSL", tag,"Gainzzzz",R.drawable.augustanatest );
-//        Event event6=new Event("PepsiCo", "PepsiCo",new Date(2019, 3, 21, 6, 00), "OSL", "OSL", tag,"Gainzzz",R.drawable.augustanatest );
-//        events.add(event1);
-//        events.add(event2);
-//        events.add(event3);
-//        events.add(event4);
-//        events.add(event5);
-//        events.add(event6);
-        //Collections.sort(events);
-       // Collections.sort(events, new DateSorter());
-
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
@@ -115,6 +101,7 @@ public class FindEvents extends AppCompatActivity {
     public void moveToSearch() {
         settingsView.setVisibility(View.GONE);
         eventslv.setVisibility(View.VISIBLE);
+        item.setVisible(true);
     }
 
     // Source: https://stackoverflow.com/questions/42275906/how-to-ask-runtime-permissions-for-camera
@@ -129,6 +116,8 @@ public class FindEvents extends AppCompatActivity {
     public void moveToSettings() {
         eventslv.setVisibility(View.GONE);
         settingsView.setVisibility(View.VISIBLE);
+        item.setVisible(false);
+
     }
 
 
@@ -215,10 +204,11 @@ public class FindEvents extends AppCompatActivity {
                     final String description=snapshot.child("description").getValue().toString();
                     String imgid=snapshot.child("imgid").getValue().toString();
                     StorageReference storage = FirebaseStorage.getInstance().getReference().child("Images").child(imgid+".jpg");
-                    final long ONE_MEGABYTE = 1024 * 1024;
+                    final long ONE_MEGABYTE = Integer.MAX_VALUE;
                     storage.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                         @Override
                         public void onSuccess(byte[] bytes) {
+
                             Event event= null;
                             try {
                                 event = new Event(name,location, startDate, duration, organization, tags, description,bytes);
@@ -226,7 +216,7 @@ public class FindEvents extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                             events.add(event);
-                            Collections.sort(events);
+                            Collections.sort(events, new DateSorter());
                             customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
                             eventslv.setAdapter(customLVAdapter);
                             progressBar.setVisibility(View.GONE);
@@ -240,7 +230,6 @@ public class FindEvents extends AppCompatActivity {
 
                                 }
                             });
-
 
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -274,7 +263,7 @@ public class FindEvents extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.sort_options, menu);
 
-        MenuItem item = menu.findItem(R.id.spinner);
+        item = menu.findItem(R.id.spinner);
         Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
         String[] spinner_list_item_array={"A-Z","Z-A", "Soonest", "Organization"};
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.my_spinner_layout, spinner_list_item_array);
@@ -314,6 +303,7 @@ public class FindEvents extends AppCompatActivity {
 
     public void signOutbtn(View v){
         FirebaseAuth.getInstance().signOut();
+
         finish();
     }
 

@@ -1,17 +1,8 @@
 package edu.augustana.osleventsandroid;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.Image;
-import android.support.annotation.NonNull;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
@@ -166,7 +157,7 @@ public class Event implements Serializable, Comparable<Event> {
 
     @Override
     public int compareTo(Event o) {
-        return this.getName().compareTo(o.getName());
+        return this.getName().toLowerCase().compareTo(o.getName().toLowerCase());
     }
 
     public int getDuration() {
@@ -211,6 +202,6 @@ class OrganizationSorter implements Comparator<Event>
 {
     public int compare(Event o1, Event o2)
     {
-        return o1.getOrganization().compareTo(o2.getOrganization());
+        return o1.getOrganization().toLowerCase().compareTo(o2.getOrganization().toLowerCase());
     }
 }
