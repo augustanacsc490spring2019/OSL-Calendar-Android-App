@@ -14,6 +14,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 
@@ -25,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,6 +62,7 @@ public class FindEvents extends AppCompatActivity {
     private DatabaseReference database;
     private RelativeLayout progressBar;
     private MenuItem item;
+    private SearchView searchBar;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -96,6 +99,7 @@ public class FindEvents extends AppCompatActivity {
         databaseListener();
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        //searchListener();
     }
 
     public void moveToSearch() {
@@ -262,7 +266,6 @@ public class FindEvents extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.sort_options, menu);
-
         item = menu.findItem(R.id.spinner);
         Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
         String[] spinner_list_item_array={"A-Z","Z-A", "Soonest", "Organization"};
@@ -298,13 +301,49 @@ public class FindEvents extends AppCompatActivity {
             }
         });
 
+
+        MenuItem searchBarItem = menu.findItem(R.id.app_bar_search);
+        SearchView searchBar = (SearchView) MenuItemCompat.getActionView(searchBarItem);
+        searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                ArrayList<Event> searchedEvents = new ArrayList<Event>();
+                for(int i = 0; i< events.size();i++){
+                    if(events.get(i).getName().toLowerCase().contains(query.toLowerCase())){
+                        searchedEvents.add(events.get(i));
+                    }
+                }
+                Collections.sort(searchedEvents);
+                customLVAdapter=new CustomLVAdapter(FindEvents.this, searchedEvents);
+                eventslv.setAdapter(customLVAdapter);
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String text) {
+                return false;
+            }
+        });
+
+        //resets the events view if they close out of the search bar
+        searchBar.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                Collections.sort(events);
+                customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
+                eventslv.setAdapter(customLVAdapter);
+                return false;
+            }
+        });
         return true;
     }
 
     public void signOutbtn(View v){
         FirebaseAuth.getInstance().signOut();
-
         finish();
+    }
+
+    private void searchListener(){
+
     }
 
 }

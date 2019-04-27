@@ -174,7 +174,6 @@ public class Event implements Serializable, Comparable<Event> {
         int hour=Integer.parseInt(date.substring(11,13));
         int min=Integer.parseInt(date.substring(14,16));
         Calendar startTime = Calendar.getInstance();
-        //TODO: make sure when it connects to firebase, the month is displayed correctly
         startTime.set(year,month,day,hour,min);
 
        return startTime;
@@ -182,26 +181,20 @@ public class Event implements Serializable, Comparable<Event> {
     }
 }
 
-    class LocationSorter implements Comparator<Event>
-    {
-        public int compare(Event o1, Event o2)
-        {
+class LocationSorter implements Comparator<Event> {
+    public int compare(Event o1, Event o2) {
             return o1.getLocation().compareTo(o2.getLocation());
         }
     }
 
-class DateSorter implements Comparator<Event>
-{
-    public int compare(Event o1, Event o2)
-    {
+class DateSorter implements Comparator<Event> {
+    public int compare(Event o1, Event o2) {
         return o2.getCalStart().compareTo(o1.getCalStart());
     }
 }
 
-class OrganizationSorter implements Comparator<Event>
-{
-    public int compare(Event o1, Event o2)
-    {
+class OrganizationSorter implements Comparator<Event> {
+    public int compare(Event o1, Event o2) {
         return o1.getOrganization().toLowerCase().compareTo(o2.getOrganization().toLowerCase());
     }
 }
