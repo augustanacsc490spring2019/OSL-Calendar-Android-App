@@ -31,6 +31,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -69,6 +71,10 @@ public class GoogleSignInActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.google_sign_in);
+        mAuth = FirebaseAuth.getInstance();
+
+        setLayout();
+        googleApiClient.connect();
         authStateListener = new FirebaseAuth.AuthStateListener() {
             /**
              * Handles
@@ -80,6 +86,7 @@ public class GoogleSignInActivity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (firebaseAuth.getCurrentUser() != null && FirebaseAuth.getInstance().getCurrentUser().getEmail().toLowerCase().contains("augustana.edu")) {
+
                     startActivityForResult(new Intent(GoogleSignInActivity.this, FindEvents.class),START_ACTIVITY_CODE);
                 } else if (firebaseAuth.getCurrentUser() != null && !FirebaseAuth.getInstance().getCurrentUser().getEmail().toLowerCase().contains("augustana.edu")) {
                     signInButton.setEnabled(true);
@@ -94,9 +101,7 @@ public class GoogleSignInActivity extends AppCompatActivity {
 
             }
         };
-        mAuth = FirebaseAuth.getInstance();
         mAuth.addAuthStateListener(authStateListener);
-        setLayout();
         signInButton.setEnabled(true);
         aboutPageButton.setEnabled(true);
         privacyView.setEnabled(true);
@@ -127,15 +132,7 @@ public class GoogleSignInActivity extends AppCompatActivity {
                 .build();
         signInButton.setEnabled(false);
 
-        googleApiClient = new GoogleApiClient.Builder(getApplicationContext()).enableAutoManage(GoogleSignInActivity.this, new GoogleApiClient.OnConnectionFailedListener() {
-            @Override
-            public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                Toast.makeText(GoogleSignInActivity.this, "Error", Toast.LENGTH_LONG).show();
-                signInButton.setEnabled(true);
-                aboutPageButton.setEnabled(true);
-                spinner.setVisibility(View.GONE);
-            }
-        }).addApi(Auth.GOOGLE_SIGN_IN_API, gso).build();
+        googleApiClient = new GoogleApiClient.Builder(getApplicationContext()).addApi(Auth.GOOGLE_SIGN_IN_API, gso).build();
 
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -252,9 +249,20 @@ public class GoogleSignInActivity extends AppCompatActivity {
                 //TODO: google sign in failed
             }
         }else if(requestCode ==START_ACTIVITY_CODE){
-            signInButton.setEnabled(true);
-            aboutPageButton.setEnabled(true);
-            spinner.setVisibility(View.GONE);
+            mAuth.signOut();
+            if(googleApiClient.isConnected()) {
+                Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(
+                        new ResultCallback<Status>() {
+                            @Override
+                            public void onResult(Status status) {
+
+                            }
+                        });
+            }
+                signInButton.setEnabled(true);
+                aboutPageButton.setEnabled(true);
+                spinner.setVisibility(View.GONE);
+
         }
     }
     //reference for where we learned to implement this: https://developers.google.com/identity/sign-in/android/

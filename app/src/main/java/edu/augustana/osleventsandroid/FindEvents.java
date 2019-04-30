@@ -13,7 +13,15 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
+
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -28,7 +36,6 @@ import android.widget.Toast;
 import com.example.osleventsandroid.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -38,18 +45,17 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
+import java.nio.file.FileStore;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
-/*
-    Uses:
-    -Code to navigate the menu screen
-    -Displays the events on the device
-    -Search or sort events
- */
 public class FindEvents extends AppCompatActivity {
 
     final int QRCODE = 0;
+    private TextView mTextMessage;
     private ListView eventslv;
     private RelativeLayout settingsView;
     private BottomNavigationView navigation;
@@ -58,6 +64,7 @@ public class FindEvents extends AppCompatActivity {
     private DatabaseReference database;
     private RelativeLayout progressBar;
     private MenuItem item;
+    private SearchView searchBar;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -84,16 +91,17 @@ public class FindEvents extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_events);
-        progressBar = (RelativeLayout) findViewById(R.id.progressLayout);
+        progressBar=(RelativeLayout) findViewById(R.id.progressLayout);
         progressBar.setVisibility(View.VISIBLE);
-        database = FirebaseDatabase.getInstance().getReference("current-events");
-        eventslv = (ListView) findViewById(R.id.listViewEvents);
-        settingsView = (RelativeLayout) findViewById(R.id.settingsView);
-        events = new ArrayList<Event>();
-        customLVAdapter = new CustomLVAdapter(FindEvents.this, events);
+        database=FirebaseDatabase.getInstance().getReference("current-events");
+        eventslv=(ListView) findViewById(R.id.listViewEvents);
+        settingsView=(RelativeLayout) findViewById(R.id.settingsView);
+        events=new ArrayList<Event>();
+        customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
         databaseListener();
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        //searchListener();
     }
 
     public void moveToSearch() {
@@ -117,6 +125,8 @@ public class FindEvents extends AppCompatActivity {
         item.setVisible(false);
 
     }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -179,39 +189,42 @@ public class FindEvents extends AppCompatActivity {
                 .create()
                 .show();
     }
+    //prevents user from hitting back button on bottom of phone and taking them back to the sign in page
+    @Override
+    public void onBackPressed(){
 
-    public void databaseListener() {
+    }
+
+    public void databaseListener(){
         database.addValueEventListener(new ValueEventListener() {
             @Override
-            //when an event is added to firebase, the listener is triggered and begins the
-            //process to add and display that event on the device
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 events.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    // Event event= snapshot.getValue(Event.class);
-                    final String name = snapshot.child("name").getValue().toString();
-                    final String startDate = snapshot.child("startDate").getValue().toString();
-                    final int duration = Integer.parseInt(snapshot.child("duration").getValue().toString());
-                    final String location = snapshot.child("location").getValue().toString();
-                    final String organization = snapshot.child("organization").getValue().toString();
-                    final String tags = snapshot.child("tags").getValue().toString();
-                    final String description = snapshot.child("description").getValue().toString();
-                    String imgid = snapshot.child("imgid").getValue().toString();
-                    StorageReference storage = FirebaseStorage.getInstance().getReference().child("Images").child(imgid + ".jpg");
+                for(DataSnapshot snapshot: dataSnapshot.getChildren()){
+                   // Event event= snapshot.getValue(Event.class);
+                    final String name=snapshot.child("name").getValue().toString();
+                    final String startDate=snapshot.child("startDate").getValue().toString();
+                    final int duration=Integer.parseInt(snapshot.child("duration").getValue().toString());
+                    final String location=snapshot.child("location").getValue().toString();
+                    final String organization=snapshot.child("organization").getValue().toString();
+                    final String tags=snapshot.child("tags").getValue().toString();
+                    final String description=snapshot.child("description").getValue().toString();
+                    String imgid=snapshot.child("imgid").getValue().toString();
+                    StorageReference storage = FirebaseStorage.getInstance().getReference().child("Images").child(imgid+".jpg");
                     final long ONE_MEGABYTE = Integer.MAX_VALUE;
-
                     storage.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                         @Override
                         public void onSuccess(byte[] bytes) {
-                            Event event = null;
+
+                            Event event= null;
                             try {
-                                event = new Event(name, location, startDate, duration, organization, tags, description, bytes);
+                                event = new Event(name,location, startDate, duration, organization, tags, description,bytes);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
                             events.add(event);
                             Collections.sort(events, new DateSorter());
-                            customLVAdapter = new CustomLVAdapter(FindEvents.this, events);
+                            customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
                             eventslv.setAdapter(customLVAdapter);
                             progressBar.setVisibility(View.GONE);
                             eventslv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -219,7 +232,7 @@ public class FindEvents extends AppCompatActivity {
                                 public void onItemClick(AdapterView adapter, View v, int position, long arg3) {
                                     Event choosenEvent = events.get(position);
                                     Intent intent = new Intent(FindEvents.this, SingleEventPage.class);
-                                    intent.putExtra("choosenEvent", choosenEvent);
+                                    intent.putExtra("choosenEvent",choosenEvent);
                                     startActivity(intent);
 
                                 }
@@ -249,8 +262,6 @@ public class FindEvents extends AppCompatActivity {
 
     /**
      * Adds a drop down for sorting in the top right action bar
-     * Contains code for the search bar
-     *
      * @param menu
      * @return boolean
      */
@@ -260,31 +271,30 @@ public class FindEvents extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.sort_options, menu);
         item = menu.findItem(R.id.spinner);
         Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
-        String[] spinner_list_item_array = {"A-Z", "Z-A", "Soonest", "Organization"};
+        String[] spinner_list_item_array={"A-Z","Z-A", "Soonest", "Organization"};
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.my_spinner_layout, spinner_list_item_array);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         //https://developer.android.com/guide/topics/ui/controls/spinner.html
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
 
-            //different compare methods are called depending on the user input
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
-                if (position == 0) {
+                if(position==0){
                     Collections.sort(events);
-                    customLVAdapter = new CustomLVAdapter(FindEvents.this, events);
+                    customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
                     eventslv.setAdapter(customLVAdapter);
-                } else if (position == 1) {
+                }else if(position==1){
                     Collections.sort(events, Collections.<Event>reverseOrder());
-                    customLVAdapter = new CustomLVAdapter(FindEvents.this, events);
+                    customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
                     eventslv.setAdapter(customLVAdapter);
-                } else if (position == 2) {
+                }else if(position==2){
                     Collections.sort(events, new DateSorter());
-                    customLVAdapter = new CustomLVAdapter(FindEvents.this, events);
+                    customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
                     eventslv.setAdapter(customLVAdapter);
-                } else if (position == 3) {
+                }else if(position==3){
                     Collections.sort(events, new OrganizationSorter());
-                    customLVAdapter = new CustomLVAdapter(FindEvents.this, events);
+                    customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
                     eventslv.setAdapter(customLVAdapter);
                 }
             }
@@ -295,18 +305,16 @@ public class FindEvents extends AppCompatActivity {
         });
 
 
-        //code for the search bar
         MenuItem searchBarItem = menu.findItem(R.id.app_bar_search);
         SearchView searchBar = (SearchView) MenuItemCompat.getActionView(searchBarItem);
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 ArrayList<Event> searchedEvents = new ArrayList<Event>();
-                for (int i = 0; i < events.size(); i++) {
+                for(int i = 0; i< events.size();i++){
                     Event currentEvent = events.get(i);
                     String lowerCaseQuery = query.toLowerCase();
-                    //searches all events based on name, location, tags, and organization
-                    if (currentEvent.getName().toLowerCase().contains(lowerCaseQuery) ||
+                    if(currentEvent.getName().toLowerCase().contains(lowerCaseQuery) ||
                             currentEvent.getLocation().toLowerCase().contains(lowerCaseQuery) ||
                             currentEvent.getTags().toLowerCase().contains(lowerCaseQuery) ||
                             currentEvent.getOrganization().toLowerCase().contains(lowerCaseQuery)) {
@@ -314,11 +322,10 @@ public class FindEvents extends AppCompatActivity {
                     }
                 }
                 Collections.sort(searchedEvents);
-                customLVAdapter = new CustomLVAdapter(FindEvents.this, searchedEvents);
+                customLVAdapter=new CustomLVAdapter(FindEvents.this, searchedEvents);
                 eventslv.setAdapter(customLVAdapter);
                 return false;
             }
-
             @Override
             public boolean onQueryTextChange(String text) {
                 return false;
@@ -330,18 +337,21 @@ public class FindEvents extends AppCompatActivity {
             @Override
             public boolean onClose() {
                 Collections.sort(events);
-                customLVAdapter = new CustomLVAdapter(FindEvents.this, events);
+                customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
                 eventslv.setAdapter(customLVAdapter);
                 return false;
             }
         });
-
+        
         return true;
     }
 
-    public void signOutbtn(View v) {
-        FirebaseAuth.getInstance().signOut();
+    public void signOutbtn(View v){
         finish();
+    }
+
+    private void searchListener(){
+
     }
 
 }
