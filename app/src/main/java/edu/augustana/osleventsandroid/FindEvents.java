@@ -21,6 +21,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import android.view.MenuItem;
 import android.view.View;
@@ -198,6 +200,7 @@ public class FindEvents extends AppCompatActivity {
                 .create()
                 .show();
     }
+    //prevents user from hitting back button on bottom of phone and taking them back to the sign in page
     @Override
     public void onBackPressed(){
 
@@ -320,7 +323,12 @@ public class FindEvents extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 ArrayList<Event> searchedEvents = new ArrayList<Event>();
                 for(int i = 0; i< events.size();i++){
-                    if(events.get(i).getName().toLowerCase().contains(query.toLowerCase())){
+                    Event currentEvent = events.get(i);
+                    String lowerCaseQuery = query.toLowerCase();
+                    if(currentEvent.getName().toLowerCase().contains(lowerCaseQuery) ||
+                            currentEvent.getLocation().toLowerCase().contains(lowerCaseQuery) ||
+                            currentEvent.getTags().toLowerCase().contains(lowerCaseQuery) ||
+                            currentEvent.getOrganization().toLowerCase().contains(lowerCaseQuery)) {
                         searchedEvents.add(events.get(i));
                     }
                 }
@@ -345,11 +353,11 @@ public class FindEvents extends AppCompatActivity {
                 return false;
             }
         });
+        
         return true;
     }
 
     public void signOutbtn(View v){
-        FirebaseAuth.getInstance().signOut();
         finish();
     }
 
