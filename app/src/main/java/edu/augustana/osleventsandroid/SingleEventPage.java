@@ -13,7 +13,6 @@ import android.provider.CalendarContract.Events;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -27,6 +26,9 @@ import com.example.osleventsandroid.R;
 import java.util.Calendar;
 import java.util.TreeMap;
 
+/*
+    Displays detailed information of a single event
+ */
 public class SingleEventPage extends AppCompatActivity {
 
     private static final int MY_PERMISSIONS_REQUEST_READ_CALENDAR = 0;
@@ -47,38 +49,39 @@ public class SingleEventPage extends AppCompatActivity {
 
 
         setContentView(R.layout.activity_single_event_page);
-        this.txtName=(TextView)  findViewById(R.id.txt_name);
-        this.txtLocation=(TextView) findViewById(R.id.txt_location);
-        this.txtDate=(TextView)  findViewById(R.id.txt_date);
-        this.txtTime=(TextView)  findViewById(R.id.txt_time);
-        this.txtOrganization=(TextView) findViewById(R.id.txt_organization);
-        this.txtDescription=(TextView)  findViewById(R.id.txt_description);
+        this.txtName = (TextView) findViewById(R.id.txt_name);
+        this.txtLocation = (TextView) findViewById(R.id.txt_location);
+        this.txtDate = (TextView) findViewById(R.id.txt_date);
+        this.txtTime = (TextView) findViewById(R.id.txt_time);
+        this.txtOrganization = (TextView) findViewById(R.id.txt_organization);
+        this.txtDescription = (TextView) findViewById(R.id.txt_description);
         map = new TreeMap();
 
-        this.img=(ImageView) findViewById(R.id.img);
+        this.img = (ImageView) findViewById(R.id.img);
         event = (Event) getIntent().getSerializableExtra("choosenEvent");
         txtName.setText(event.getName());
         txtLocation.setText(event.getLocation());
         txtDate.setText(event.getStartDate());
-        txtTime.setText(event.getStartTime()+" - "+event.getEndTime());
+        txtTime.setText(event.getStartTime() + " - " + event.getEndTime());
         txtOrganization.setText(event.getOrganization());
         txtDescription.setText(event.getDescription());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        img.setImageBitmap(BitmapFactory.decodeByteArray(event.getImg(),0,event.getImg().length));
+        img.setImageBitmap(BitmapFactory.decodeByteArray(event.getImg(), 0, event.getImg().length));
 
 
         Button btn_calendar = (Button) findViewById(R.id.btn_calendar);
         btn_calendar.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                addToCalendar();
-                                            }
-                                        });
+            @Override
+            public void onClick(View v) {
+                addToCalendar();
+            }
+        });
 
 
     }
 
 
+    //Add the event to the user's google calendar
     public void addToCalendar() {
         Calendar startTime = event.getCalStart();
 
@@ -182,11 +185,6 @@ public class SingleEventPage extends AppCompatActivity {
             case android.R.id.home:
                 finish();
                 return true;
-
-//            case R.id.sort:
-//                // User chose the "Sort" item, show the app settings UI...
-//                System.out.println("Do Sort");
-//                return true;
 
             default:
                 // If we got here, the user's action was not recognized.

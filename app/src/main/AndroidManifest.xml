@@ -41,10 +41,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="edu.augustana.osleventsandroid.MainActivity"
-            android:label="Main"
-            android:screenOrientation="portrait" />
-        <activity
             android:name="edu.augustana.osleventsandroid.QrCodeScanner"
             android:label="QRScanner"
             android:screenOrientation="portrait" />

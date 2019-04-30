@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="@color/white">
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/google_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
         app:layout_heightPercent="7%"
         app:layout_marginBottomPercent="6%"
         app:layout_marginLeftPercent="5%"
@@ -22,14 +22,14 @@
     </com.google.android.gms.common.SignInButton>
 
     <!--<ImageView-->
-        <!--android:id="@+id/imageView"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--android:layout_centerVertical="true"-->
-        <!--app:layout_heightPercent="60%"-->
-        <!--app:layout_widthPercent="60%"-->
-        <!--app:srcCompat="@drawable/aces_image" />-->
+    <!--android:id="@+id/imageView"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_centerHorizontal="true"-->
+    <!--android:layout_centerVertical="true"-->
+    <!--app:layout_heightPercent="60%"-->
+    <!--app:layout_widthPercent="60%"-->
+    <!--app:srcCompat="@drawable/aces_image" />-->
 
     <ProgressBar
         android:id="@+id/ctrlActivityIndicator"
@@ -43,9 +43,9 @@
         android:id="@+id/privacyView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="24dp"
         android:gravity="center"
@@ -60,11 +60,11 @@
         android:id="@+id/about_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignTop="@id/google_btn"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_alignTop="@id/google_btn"
-        android:layout_marginBottom="-2dp"
         android:layout_marginTop="-2dp"
+        android:layout_marginBottom="-2dp"
         android:text="?"
         android:textSize="14dp"
         app:layout_heightPercent="7.5%"
@@ -72,16 +72,16 @@
         app:layout_widthPercent="10%" />
 
     <!--<ImageView-->
-        <!--android:id="@+id/imageView4"-->
-        <!--app:layout_marginTopPercent="6%"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="120dp"-->
-        <!--android:layout_alignParentBottom="false"-->
-        <!--android:layout_alignParentStart="false"-->
-        <!--android:layout_alignParentLeft="true"-->
-        <!--android:layout_alignParentTop="true"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--app:layout_marginLeftPercent="7%"-->
-        <!--app:srcCompat="@drawable/aces_title" />-->
+    <!--android:id="@+id/imageView4"-->
+    <!--app:layout_marginTopPercent="6%"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="120dp"-->
+    <!--android:layout_alignParentBottom="false"-->
+    <!--android:layout_alignParentStart="false"-->
+    <!--android:layout_alignParentLeft="true"-->
+    <!--android:layout_alignParentTop="true"-->
+    <!--android:layout_centerHorizontal="true"-->
+    <!--app:layout_marginLeftPercent="7%"-->
+    <!--app:srcCompat="@drawable/aces_title" />-->
 
 </android.support.percent.PercentRelativeLayout>
