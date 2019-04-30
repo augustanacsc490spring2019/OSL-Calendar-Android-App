@@ -312,7 +312,12 @@ public class FindEvents extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 ArrayList<Event> searchedEvents = new ArrayList<Event>();
                 for(int i = 0; i< events.size();i++){
-                    if(events.get(i).getName().toLowerCase().contains(query.toLowerCase())){
+                    Event currentEvent = events.get(i);
+                    String lowerCaseQuery = query.toLowerCase();
+                    if(currentEvent.getName().toLowerCase().contains(lowerCaseQuery) ||
+                            currentEvent.getLocation().toLowerCase().contains(lowerCaseQuery) ||
+                            currentEvent.getTags().toLowerCase().contains(lowerCaseQuery) ||
+                            currentEvent.getOrganization().toLowerCase().contains(lowerCaseQuery)) {
                         searchedEvents.add(events.get(i));
                     }
                 }
@@ -337,6 +342,7 @@ public class FindEvents extends AppCompatActivity {
                 return false;
             }
         });
+        
         return true;
     }
 
