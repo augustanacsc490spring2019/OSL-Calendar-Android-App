@@ -30,6 +30,8 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -131,15 +133,7 @@ public class GoogleSignInActivity extends AppCompatActivity {
                 .build();
         signInButton.setEnabled(false);
 
-        googleApiClient = new GoogleApiClient.Builder(getApplicationContext()).enableAutoManage(GoogleSignInActivity.this, new GoogleApiClient.OnConnectionFailedListener() {
-            @Override
-            public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                Toast.makeText(GoogleSignInActivity.this, "Error", Toast.LENGTH_LONG).show();
-                signInButton.setEnabled(true);
-                aboutPageButton.setEnabled(true);
-                spinner.setVisibility(View.GONE);
-            }
-        }).addApi(Auth.GOOGLE_SIGN_IN_API, gso).build();
+        googleApiClient = new GoogleApiClient.Builder(getApplicationContext()).addApi(Auth.GOOGLE_SIGN_IN_API, gso).build();
 
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -256,9 +250,19 @@ public class GoogleSignInActivity extends AppCompatActivity {
                 //TODO: google sign in failed
             }
         }else if(requestCode ==START_ACTIVITY_CODE){
-            signInButton.setEnabled(true);
-            aboutPageButton.setEnabled(true);
-            spinner.setVisibility(View.GONE);
+
+            mAuth.signOut();
+            Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(
+                    new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(Status status) {
+
+                        }
+                    });
+                signInButton.setEnabled(true);
+                aboutPageButton.setEnabled(true);
+                spinner.setVisibility(View.GONE);
+
         }
     }
     //reference for where we learned to implement this: https://developers.google.com/identity/sign-in/android/
@@ -300,6 +304,7 @@ public class GoogleSignInActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+        googleApiClient.connect();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 }

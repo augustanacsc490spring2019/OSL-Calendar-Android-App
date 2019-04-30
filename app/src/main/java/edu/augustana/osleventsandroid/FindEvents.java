@@ -19,6 +19,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import android.view.MenuItem;
 import android.view.View;
@@ -187,6 +189,7 @@ public class FindEvents extends AppCompatActivity {
                 .create()
                 .show();
     }
+    //prevents user from hitting back button on bottom of phone and taking them back to the sign in page
     @Override
     public void onBackPressed(){
 
@@ -338,7 +341,6 @@ public class FindEvents extends AppCompatActivity {
     }
 
     public void signOutbtn(View v){
-        FirebaseAuth.getInstance().signOut();
         finish();
     }
 
