@@ -4,9 +4,11 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -24,8 +26,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -63,6 +69,10 @@ public class FindEvents extends AppCompatActivity {
     private RelativeLayout progressBar;
     private MenuItem item;
     private SearchView searchBar;
+    private RadioButton checkedRadioButton;
+    private LinearLayout linear_layout;
+    private RelativeLayout relative_layout;
+    private RadioGroup radioGroup;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -121,6 +131,7 @@ public class FindEvents extends AppCompatActivity {
         eventslv.setVisibility(View.GONE);
         settingsView.setVisibility(View.VISIBLE);
         item.setVisible(false);
+        startThemeListener();
 
     }
 
@@ -342,8 +353,35 @@ public class FindEvents extends AppCompatActivity {
         finish();
     }
 
-    private void searchListener(){
+    public void startThemeListener(){
+        radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
+        checkedRadioButton = (RadioButton) radioGroup.findViewById(radioGroup.getCheckedRadioButtonId());
+        relative_layout = findViewById(R.id.settingsView);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+        {
+            public void onCheckedChanged(RadioGroup radioGroup, int checkedId)
+            {
 
+                RadioButton checkedRadioButton = (RadioButton)radioGroup.findViewById(checkedId);
+                // This will get the radiobutton that has changed in its check state
+                // This puts the value (true/false) into the variable
+                boolean isChecked = checkedRadioButton.isChecked();
+                // If the radiobutton that has changed in check state is now checked...
+                if (isChecked)
+                { ;
+                    Log.d("theme1", "theme1Clicked");
+                    //this crashes it for some reason
+                    // RelativeLayout singleEvents = (RelativeLayout) findViewById(R.id.singleEvent);
+                 //   singleEvents.setBackgroundColor(Color.BLUE);
+
+
+                    //changes the setting page color as well as the findEvents background color
+                    ConstraintLayout constraintLayout = findViewById(R.id.container);
+                    constraintLayout.setBackgroundColor(Color.BLUE);
+                    relative_layout.setBackgroundColor(Color.BLUE);
+                }
+            }
+        });
     }
 
 }
