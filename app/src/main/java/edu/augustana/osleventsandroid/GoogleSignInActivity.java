@@ -75,6 +75,10 @@ public class GoogleSignInActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.google_sign_in);
+        mAuth = FirebaseAuth.getInstance();
+
+        setLayout();
+        googleApiClient.connect();
         authStateListener = new FirebaseAuth.AuthStateListener() {
             /**
              * Handles
@@ -86,6 +90,7 @@ public class GoogleSignInActivity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (firebaseAuth.getCurrentUser() != null && FirebaseAuth.getInstance().getCurrentUser().getEmail().toLowerCase().contains("augustana.edu")) {
+
                     startActivityForResult(new Intent(GoogleSignInActivity.this, FindEvents.class),START_ACTIVITY_CODE);
                 } else if (firebaseAuth.getCurrentUser() != null && !FirebaseAuth.getInstance().getCurrentUser().getEmail().toLowerCase().contains("augustana.edu")) {
                     signInButton.setEnabled(true);
@@ -100,9 +105,7 @@ public class GoogleSignInActivity extends AppCompatActivity {
 
             }
         };
-        mAuth = FirebaseAuth.getInstance();
         mAuth.addAuthStateListener(authStateListener);
-        setLayout();
         signInButton.setEnabled(true);
         aboutPageButton.setEnabled(true);
         privacyView.setEnabled(true);
@@ -250,15 +253,16 @@ public class GoogleSignInActivity extends AppCompatActivity {
                 //TODO: google sign in failed
             }
         }else if(requestCode ==START_ACTIVITY_CODE){
-
             mAuth.signOut();
-            Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(
-                    new ResultCallback<Status>() {
-                        @Override
-                        public void onResult(Status status) {
+            if(googleApiClient.isConnected()) {
+                Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(
+                        new ResultCallback<Status>() {
+                            @Override
+                            public void onResult(Status status) {
 
-                        }
-                    });
+                            }
+                        });
+            }
                 signInButton.setEnabled(true);
                 aboutPageButton.setEnabled(true);
                 spinner.setVisibility(View.GONE);
@@ -304,7 +308,6 @@ public class GoogleSignInActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
-        googleApiClient.connect();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 }
