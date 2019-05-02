@@ -1,5 +1,8 @@
 package edu.augustana.osleventsandroid;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -45,9 +48,32 @@ public class QrCodeScanner extends AppCompatActivity implements ZXingScannerView
         //Logger.verbose("result", rawResult.getBarcodeFormat().toString());
         //If you would like to resume scanning, call this method below:
         //mScannerView.resumeCameraPreview(this);
-        Intent intent = new Intent();
-        intent.putExtra("QR Code", rawResult.getText());
-        setResult(RESULT_OK, intent);
-        finish();
+       final Result result=rawResult;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(true);
+        builder.setTitle("Open URL");
+        builder.setMessage("Check into the event? You'll be redirected to URL");
+        builder.setPositiveButton("Confirm",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent();
+                        intent.putExtra("QR Code", result.getText());
+                        setResult(RESULT_OK, intent);
+                        finish();
+                    }
+                });
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                onResume();
+            }
+
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+
     }
 }
