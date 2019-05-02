@@ -28,6 +28,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -49,6 +50,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.nio.file.FileStore;
@@ -373,21 +376,25 @@ public class FindEvents extends AppCompatActivity {
                 RadioButton checkedRadioButton = (RadioButton)radioGroup.findViewById(checkedId);
                 // This will get the radiobutton that has changed in its check state
                 // This puts the value (true/false) into the variable
-                boolean isChecked = checkedRadioButton.isChecked();
-                // If the radiobutton that has changed in check state is now checked...
-                if (isChecked)
-                { ;
-                    Log.d("theme1", "theme1Clicked");
-                    //this crashes it for some reason
-                    // RelativeLayout singleEvents = (RelativeLayout) findViewById(R.id.singleEvent);
-                 //   singleEvents.setBackgroundColor(Color.BLUE);
-
-
-                    //changes the setting page color as well as the findEvents background color
-                    ConstraintLayout constraintLayout = findViewById(R.id.container);
-                    constraintLayout.setBackgroundColor(Color.BLUE);
-                    relative_layout.setBackgroundColor(Color.BLUE);
-                }
+               if(checkedRadioButton.getId() == radioGroup.findViewById(R.id.theme1).getId()) {
+                   // If the radiobutton that has changed in check state is now checked...
+                   Theme.whiteTheme();
+               }else if(checkedRadioButton.getId() == radioGroup.findViewById(R.id.theme2).getId()){
+                   Theme.darkTheme();
+               }else if(checkedRadioButton.getId() == radioGroup.findViewById(R.id.theme3).getId()){
+                   Theme.seaBlueTheme();
+               }else if(checkedRadioButton.getId() == radioGroup.findViewById(R.id.theme4).getId()){
+                   Theme.twilightPurpleTheme();
+               }
+                ConstraintLayout constraintLayout = findViewById(R.id.container);
+               TextView themeTitle = findViewById(R.id.themeTitle);
+               themeTitle.setTextColor(Theme.getTextColor());
+                TextView settingsTitle = findViewById(R.id.settingsTitle);
+                settingsTitle.setTextColor(Theme.getTextColor());
+                Button signOutBttn = findViewById(R.id.signOutBttn);
+                signOutBttn.setBackgroundColor(Theme.getButtonColor());
+                constraintLayout.setBackgroundColor(Theme.getBackgroundColor());
+                relative_layout.setBackgroundColor(Theme.getBackgroundColor());
             }
         });
     }

@@ -89,32 +89,33 @@
                         android:id="@+id/theme1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Theme 1" />
+                        android:text="Standard" />
 
                     <RadioButton
                         android:id="@+id/theme2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/theme1"
-                        android:text="Theme 2" />
+                        android:text="Dark" />
 
                     <RadioButton
                         android:id="@+id/theme3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/theme2"
-                        android:text="Theme 3" />
+                        android:text="Sea Blue" />
 
                     <RadioButton
                         android:id="@+id/theme4"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/theme3"
-                        android:text="Theme 4" />
+                        android:text="Twilight Purple" />
 
                 </RadioGroup>
 
                 <Button
+                    android:id="@+id/signOutBttn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/radioGroup"

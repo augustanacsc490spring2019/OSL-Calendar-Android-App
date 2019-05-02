@@ -19,6 +19,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.example.osleventsandroid.R;
@@ -77,6 +80,7 @@ public class SingleEventPage extends AppCompatActivity {
             }
         });
 
+        makeTheme();
 
     }
 
@@ -192,6 +196,38 @@ public class SingleEventPage extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    public void makeTheme(){
+        LinearLayout single_layout = findViewById(R.id.single_layout);
+        ScrollView single_bottom_layout = findViewById(R.id.single_bottom_layout);
+        TextView time = findViewById(R.id.txt_time);
+        time.setTextColor(Theme.getTextColor());
+        TextView txt_name= findViewById(R.id.txt_name);
+        txt_name.setTextColor(Theme.getTextColor());
+        TextView lbl_location = findViewById(R.id.lbl_location);
+        lbl_location.setTextColor(Theme.getTextColor());
+        TextView lbl_Date = findViewById(R.id.lbl_Date);
+        lbl_Date.setTextColor(Theme.getTextColor());
+        TextView lbl_Time = findViewById(R.id.lbl_Time);
+        lbl_Time.setTextColor(Theme.getTextColor());
+        TextView lbl_org = findViewById(R.id.lbl_org);
+        lbl_org.setTextColor(Theme.getTextColor());
+        TextView lbl_Descrip= findViewById(R.id.lbl_Descrip);
+        lbl_Descrip.setTextColor(Theme.getTextColor());
+        TextView txt_location = findViewById(R.id.txt_location);
+        txt_location.setTextColor(Theme.getTextColor());
+        TextView txt_date = findViewById(R.id.txt_date);
+        txt_date.setTextColor(Theme.getTextColor());
+        TextView    txt_organization = findViewById(R.id. txt_organization);
+        txt_organization.setTextColor(Theme.getTextColor());
+        TextView txt_description = findViewById(R.id.txt_description);
+        txt_description.setTextColor(Theme.getTextColor());
+        Button btn_calendar = findViewById(R.id.btn_calendar);
+        btn_calendar.setBackgroundColor(Theme.getButtonColor());
+        btn_calendar.setTextColor(Theme.getTextColor());
+        single_bottom_layout.setBackgroundColor(Theme.getBackgroundColor());
+        single_layout.setBackgroundColor(Theme.getBackgroundColor());
     }
 }
 
