@@ -6,79 +6,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="edu.augustana.osleventsandroid.SingleEventPage">
-<<<<<<< HEAD
-<ScrollView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
-    <LinearLayout
-        android:id="@+id/single_event_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
-        <TextView
-            android:id="@+id/txt_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Name"
-           android:layout_gravity="center"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="5dp"
-            android:textSize="32dp"
-            android:textStyle="bold"/>
-    <RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-
-        >
-    <ImageView
-        android:id="@+id/img"
-        android:layout_width="300dp"
-        android:layout_height="200dp"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="10dp"/>
-</RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/black"/>
-    <RelativeLayout
-        android:id="@+id/singleEvent"
-        android:layout_marginTop="10dp"
-=======
 
     <ScrollView
->>>>>>> 77ff696b87942e0e3c1e0ae0edf2b2814837afe2
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-<<<<<<< HEAD
-            android:layout_height="1dp"
-            android:background="@android:color/black"/>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp">
-
-        <Button
-            android:id="@+id/btn_calendar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add to Calendar"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"/>
-    </RelativeLayout>
-    </LinearLayout>
-</ScrollView>
-=======
             android:layout_height="match_parent"
             android:orientation="vertical">
 
@@ -252,5 +186,4 @@
             </RelativeLayout>
         </LinearLayout>
     </ScrollView>
->>>>>>> 77ff696b87942e0e3c1e0ae0edf2b2814837afe2
 </LinearLayout>
