@@ -17,17 +17,17 @@ public class Event implements Serializable, Comparable<Event> {
     private String location;
     private String date;
     private int duration;
-    private String organization;
+    private String group;
     private String tags;
     private String description;
     private byte[] img;
     private FirebaseStorage storage;
 
-    public Event(String name, String location, String date, int duration, String organization, String tags, String description, byte[] img) throws IOException {
+    public Event(String name, String location, String date, int duration, String group, String tags, String description, byte[] img) throws IOException {
         this.name = name;
         this.location = location;
         this.date = date;
-        this.organization = organization;
+        this.group = group;
         this.duration = duration;
         this.tags = tags;
         this.img = img;
@@ -114,8 +114,8 @@ public class Event implements Serializable, Comparable<Event> {
         return hour + ":" + minStr + " " + ampm;
     }
 
-    public String getOrganization() {
-        return organization;
+    public String getGroup() {
+        return group;
     }
 
     public String getTags() {
@@ -156,8 +156,8 @@ class DateSorter implements Comparator<Event> {
     }
 }
 
-class OrganizationSorter implements Comparator<Event> {
+class GroupSorter implements Comparator<Event> {
     public int compare(Event o1, Event o2) {
-        return o1.getOrganization().toLowerCase().compareTo(o2.getOrganization().toLowerCase());
+        return o1.getGroup().toLowerCase().compareTo(o2.getGroup().toLowerCase());
     }
 }

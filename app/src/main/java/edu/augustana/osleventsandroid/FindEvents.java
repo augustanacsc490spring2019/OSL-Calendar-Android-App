@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,15 +15,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -35,7 +27,6 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -52,15 +43,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import org.w3c.dom.Text;
-
 import java.io.IOException;
-import java.nio.file.FileStore;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 
 public class FindEvents extends AppCompatActivity {
 
@@ -122,6 +107,7 @@ public class FindEvents extends AppCompatActivity {
         settingsView.setVisibility(View.GONE);
         eventslv.setVisibility(View.VISIBLE);
         item.setVisible(true);
+        searchBar.setVisibility(View.VISIBLE);
     }
 
     // Source: https://stackoverflow.com/questions/42275906/how-to-ask-runtime-permissions-for-camera
@@ -137,6 +123,7 @@ public class FindEvents extends AppCompatActivity {
         eventslv.setVisibility(View.GONE);
         settingsView.setVisibility(View.VISIBLE);
         item.setVisible(false);
+        searchBar.setVisibility(View.GONE);
         startThemeListener();
 
     }
@@ -287,7 +274,7 @@ public class FindEvents extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.sort_options, menu);
         item = menu.findItem(R.id.spinner);
         Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
-        String[] spinner_list_item_array={"A-Z","Z-A", "Soonest", "Organization"};
+        String[] spinner_list_item_array={"A-Z","Z-A", "Soonest", "Group"};
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.my_spinner_layout, spinner_list_item_array);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
@@ -309,7 +296,7 @@ public class FindEvents extends AppCompatActivity {
                     customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
                     eventslv.setAdapter(customLVAdapter);
                 }else if(position==3){
-                    Collections.sort(events, new OrganizationSorter());
+                    Collections.sort(events, new GroupSorter());
                     customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
                     eventslv.setAdapter(customLVAdapter);
                 }
@@ -322,7 +309,7 @@ public class FindEvents extends AppCompatActivity {
 
 
         MenuItem searchBarItem = menu.findItem(R.id.app_bar_search);
-        SearchView searchBar = (SearchView) MenuItemCompat.getActionView(searchBarItem);
+        searchBar = (SearchView) MenuItemCompat.getActionView(searchBarItem);
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -333,7 +320,7 @@ public class FindEvents extends AppCompatActivity {
                     if(currentEvent.getName().toLowerCase().contains(lowerCaseQuery) ||
                             currentEvent.getLocation().toLowerCase().contains(lowerCaseQuery) ||
                             currentEvent.getTags().toLowerCase().contains(lowerCaseQuery) ||
-                            currentEvent.getOrganization().toLowerCase().contains(lowerCaseQuery)) {
+                            currentEvent.getGroup().toLowerCase().contains(lowerCaseQuery)) {
                         searchedEvents.add(events.get(i));
                     }
                 }

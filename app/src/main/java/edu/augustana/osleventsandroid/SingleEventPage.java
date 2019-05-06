@@ -20,7 +20,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -41,7 +40,7 @@ public class SingleEventPage extends AppCompatActivity {
     private TextView txtLocation;
     private TextView txtDate;
     private TextView txtTime;
-    private TextView txtOrganization;
+    private TextView txtGroup;
     private TextView txtDescription;
     private ImageView img;
     private TreeMap map;
@@ -56,7 +55,7 @@ public class SingleEventPage extends AppCompatActivity {
         this.txtLocation = (TextView) findViewById(R.id.txt_location);
         this.txtDate = (TextView) findViewById(R.id.txt_date);
         this.txtTime = (TextView) findViewById(R.id.txt_time);
-        this.txtOrganization = (TextView) findViewById(R.id.txt_organization);
+        this.txtGroup = (TextView) findViewById(R.id.txt_organization);
         this.txtDescription = (TextView) findViewById(R.id.txt_description);
         map = new TreeMap();
 
@@ -66,7 +65,7 @@ public class SingleEventPage extends AppCompatActivity {
         txtLocation.setText(event.getLocation());
         txtDate.setText(event.getStartDate());
         txtTime.setText(event.getStartTime() + " - " + event.getEndTime());
-        txtOrganization.setText(event.getOrganization());
+        txtGroup.setText(event.getGroup());
         txtDescription.setText(event.getDescription());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         img.setImageBitmap(BitmapFactory.decodeByteArray(event.getImg(), 0, event.getImg().length));

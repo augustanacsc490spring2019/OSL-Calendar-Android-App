@@ -98,7 +98,7 @@
                     android:layout_below="@id/txt_time"
                     android:layout_alignBaseline="@id/txt_organization"
                     android:layout_alignLeft="@id/lbl_location"
-                    android:text="Organization:"
+                    android:text="Group:"
                     android:textSize="18dp"
                     android:textStyle="bold" />
 

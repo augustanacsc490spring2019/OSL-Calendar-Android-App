@@ -45,7 +45,7 @@ public class CustomLVAdapter extends ArrayAdapter {
         viewHolder.txtLocation.setText(event.getLocation());
         viewHolder.txtDate.setText(event.getStartDate());
         viewHolder.txtDuration.setText(event.getStartTime() + "-" + event.getEndTime());
-        viewHolder.txtOrganization.setText(event.getOrganization());
+        viewHolder.txtOrganization.setText(event.getGroup());
         return newView;
     }
 
