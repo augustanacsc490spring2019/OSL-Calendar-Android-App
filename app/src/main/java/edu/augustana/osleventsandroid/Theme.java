@@ -10,7 +10,7 @@ public class Theme {
     private static int textColor = Color.rgb(0,0,0);
     private static int checkboxColor = Color.BLUE;
     private static int checkboxBackground = Color.WHITE;
-    private static int buttonColor = Color.GRAY;
+    private static int buttonColor = Color.LTGRAY;
 
     public static void whiteTheme() {
         backgroundColor = Color.rgb(255, 255, 255);
@@ -18,7 +18,7 @@ public class Theme {
         textColor = Color.rgb(0, 0, 0);
         checkboxColor = Color.BLUE;
         checkboxBackground = Color.WHITE;
-        buttonColor = Color.GRAY;
+        buttonColor = Color.LTGRAY;
     }
 
     public static void darkTheme(){

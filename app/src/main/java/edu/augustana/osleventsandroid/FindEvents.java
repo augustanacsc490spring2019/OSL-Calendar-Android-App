@@ -1,9 +1,11 @@
 package edu.augustana.osleventsandroid;
 
 import android.Manifest;
+import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -40,6 +42,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.collection.LLRBNode;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -100,7 +103,8 @@ public class FindEvents extends AppCompatActivity {
         databaseListener();
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        //searchListener();
+        BottomNavigationView navigation = findViewById(R.id.navigation);
+        navigation.setBackgroundColor(Theme.getButtonColor());
     }
 
     public void moveToSearch() {
@@ -375,13 +379,27 @@ public class FindEvents extends AppCompatActivity {
                }else if(checkedRadioButton.getId() == radioGroup.findViewById(R.id.theme4).getId()){
                    Theme.twilightPurpleTheme();
                }
-                ConstraintLayout constraintLayout = findViewById(R.id.container);
+               ConstraintLayout constraintLayout = findViewById(R.id.container);
                TextView themeTitle = findViewById(R.id.themeTitle);
                themeTitle.setTextColor(Theme.getTextColor());
                 TextView settingsTitle = findViewById(R.id.settingsTitle);
                 settingsTitle.setTextColor(Theme.getTextColor());
                 Button signOutBttn = findViewById(R.id.signOutBttn);
                 signOutBttn.setBackgroundColor(Theme.getButtonColor());
+                RadioButton theme1  = findViewById(R.id.theme1);
+                theme1.setTextColor(Theme.getTextColor());
+
+                RadioButton theme2  = findViewById(R.id.theme2);
+                theme2.setTextColor(Theme.getTextColor());
+                RadioButton theme3  = findViewById(R.id.theme3);
+                theme3.setTextColor(Theme.getTextColor());
+                RadioButton theme4  = findViewById(R.id.theme4);
+                theme4.setTextColor(Theme.getTextColor());
+                BottomNavigationView navigation = findViewById(R.id.navigation);
+                navigation.setBackgroundColor(Theme.getButtonColor());
+
+                ListView listOfEvents = findViewById(R.id.listViewEvents);
+
                 constraintLayout.setBackgroundColor(Theme.getBackgroundColor());
                 relative_layout.setBackgroundColor(Theme.getBackgroundColor());
             }

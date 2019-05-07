@@ -39,8 +39,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="@dimen/fui_min_height_target"
+        android:background="#34FFFFFF"
         app:layout_constraintBottom_toTopOf="@id/navigation"
-        app:layout_constraintEnd_toEndOf="@id/navigation" />
+        app:layout_constraintEnd_toEndOf="@id/navigation"/>
+
+
 
     <RelativeLayout
         android:id="@+id/settingsView"
@@ -58,6 +61,7 @@
             android:layout_height="match_parent">
 
             <RelativeLayout
+                android:id="@+id/innerRelativeLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 

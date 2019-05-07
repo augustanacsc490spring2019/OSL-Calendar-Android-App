@@ -218,7 +218,7 @@ public class SingleEventPage extends AppCompatActivity {
         txt_location.setTextColor(Theme.getTextColor());
         TextView txt_date = findViewById(R.id.txt_date);
         txt_date.setTextColor(Theme.getTextColor());
-        TextView    txt_organization = findViewById(R.id. txt_organization);
+        TextView txt_organization = findViewById(R.id. txt_organization);
         txt_organization.setTextColor(Theme.getTextColor());
         TextView txt_description = findViewById(R.id.txt_description);
         txt_description.setTextColor(Theme.getTextColor());
