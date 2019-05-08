@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Comparator;
-
+import java.text.SimpleDateFormat;
 /*
     This class houses all the information for an event. It allows you to get information on a
     particular event, and contains custom compare methods for the events.
@@ -33,7 +33,7 @@ public class Event implements Serializable, Comparable<Event> {
         this.img = img;
         this.description = description;
     }
-
+//Getters and setters
     public byte[] getImg() {
         return img;
     }
@@ -59,59 +59,25 @@ public class Event implements Serializable, Comparable<Event> {
         return calDatetime[0];
     }
 
+    /**
+     *
+     * @return string format of event start time
+     */
     public String getStartTime() {
-        String[] calDatetime = date.split(" ");
-        int hour = Integer.parseInt(calDatetime[1].substring(0, 2));
-        int min = Integer.parseInt(calDatetime[1].substring(3, 5));
-        String ampm = "";
-
-        if (hour >= 12) {
-            ampm = "PM";
-        } else {
-            ampm = "AM";
-        }
-
-        if (hour == 0) {
-            hour = 12;
-        } else if (hour != 12) {
-            hour = hour % 12;
-        }
-        String hourStr = hour + "";
-        String minStr = min + "";
-
-        if (min < 10) {
-            minStr = "0" + min;
-        }
-        return hour + ":" + minStr + " " + ampm;
+        Calendar start=getCalStart();
+        SimpleDateFormat df = new SimpleDateFormat("h:mm a");
+        return df.format(start.getTime());
     }
 
+    /**
+     *
+     * @return string format of the event end time
+     */
     public String getEndTime() {
-        String[] calDatetime = date.split(" ");
-        int hour = Integer.parseInt(calDatetime[1].substring(0, 2)) + duration / 60;
-        int min = Integer.parseInt(calDatetime[1].substring(3, 5)) + duration % 60;
-        if (min >= 60) {
-            hour = hour + min / 60;
-            min = min % 60;
-        }
-        hour = hour % 24;
-        String ampm = "";
-        if (hour >= 12) {
-            ampm = "PM";
-        } else {
-            ampm = "AM";
-        }
-
-        if (hour == 0) {
-            hour = 12;
-        } else if (hour != 12) {
-            hour = hour % 12;
-        }
-        String minStr = min + "";
-
-        if (min < 10) {
-            minStr = "0" + min;
-        }
-        return hour + ":" + minStr + " " + ampm;
+        Calendar end=getCalStart();
+        end.add(Calendar.MINUTE, duration);
+        SimpleDateFormat df = new SimpleDateFormat("h:mm a");
+        return df.format(end.getTime());
     }
 
     public String getGroup() {
@@ -122,15 +88,20 @@ public class Event implements Serializable, Comparable<Event> {
         return tags;
     }
 
+    /**
+     * Compare event titles for sorting
+     */
     @Override
-    public int compareTo(Event o) {
-        return this.getName().toLowerCase().compareTo(o.getName().toLowerCase());
-    }
+    public int compareTo(Event o) { return this.getName().toLowerCase().compareTo(o.getName().toLowerCase()); }
 
     public int getDuration() {
         return duration;
     }
 
+    /**
+     * Converts Date from string to calander
+     * @return Calander object of date
+     */
     public Calendar getCalStart() {
         int month = Integer.parseInt(date.substring(0, 2)) - 1;
         int day = Integer.parseInt(date.substring(3, 5));
@@ -144,6 +115,9 @@ public class Event implements Serializable, Comparable<Event> {
     }
 }
 
+/**
+ * Classes for sorting events by location, date and group
+ */
 class LocationSorter implements Comparator<Event> {
     public int compare(Event o1, Event o2) {
         return o1.getLocation().compareTo(o2.getLocation());
@@ -152,7 +126,7 @@ class LocationSorter implements Comparator<Event> {
 
 class DateSorter implements Comparator<Event> {
     public int compare(Event o1, Event o2) {
-        return o2.getCalStart().compareTo(o1.getCalStart());
+        return o1.getCalStart().compareTo(o2.getCalStart());
     }
 }
 

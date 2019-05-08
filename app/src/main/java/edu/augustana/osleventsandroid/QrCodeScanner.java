@@ -1,17 +1,25 @@
 package edu.augustana.osleventsandroid;
 
-import android.app.Activity;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
+
+
 import com.google.zxing.Result;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 // Source: https://stackoverflow.com/questions/8831050/android-how-to-read-qr-code-in-my-application
 
+/**
+ * Class for scanning QR code and get code result
+ */
 public class QrCodeScanner extends AppCompatActivity implements ZXingScannerView.ResultHandler {
+    //Data fields
     private ZXingScannerView mScannerView;
 
     @Override
@@ -21,8 +29,37 @@ public class QrCodeScanner extends AppCompatActivity implements ZXingScannerView
         mScannerView = new ZXingScannerView(this);
         // Set the scanner view as the content view
         setContentView(mScannerView);
+        //for displaying back button
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+    /**
+     * Code for back button
+     * @param item MenuItem
+     * @return boolean
+     */
+    //https://stackoverflow.com/questions/14545139/android-back-button-in-the-title-bar
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * For back button
+     * @param menu MenuItem
+     * @return
+     */
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
+    }
+
+    /**
+     * Starts camera for scanning
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -32,6 +69,9 @@ public class QrCodeScanner extends AppCompatActivity implements ZXingScannerView
         mScannerView.startCamera();
     }
 
+    /**
+     * Pauses camera
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -39,20 +79,19 @@ public class QrCodeScanner extends AppCompatActivity implements ZXingScannerView
         mScannerView.stopCamera();
     }
 
+    /**
+     * Action once qr code has been scanned
+     * @param rawResult the result code from the QR code
+     */
     @Override
     public void handleResult(Result rawResult) {
-        // Do something with the result here
-        // Prints scan results
-        //Logger.verbose("result", rawResult.getText());
-        // Prints the scan format (qrcode, pdf417 etc.)
-        //Logger.verbose("result", rawResult.getBarcodeFormat().toString());
-        //If you would like to resume scanning, call this method below:
-        //mScannerView.resumeCameraPreview(this);
+
        final Result result=rawResult;
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(true);
         builder.setTitle("Open URL");
-        builder.setMessage("Check into the event? You'll be redirected to URL");
+        builder.setMessage("Check into the event? You will be redirected to URL.");
         builder.setPositiveButton("Confirm",
                 new DialogInterface.OnClickListener() {
                     @Override

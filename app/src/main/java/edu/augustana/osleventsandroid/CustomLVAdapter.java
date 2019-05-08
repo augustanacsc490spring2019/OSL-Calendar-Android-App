@@ -27,6 +27,13 @@ public class CustomLVAdapter extends ArrayAdapter {
         this.events = new ArrayList<Event>(events);
     }
 
+    /**
+     * Sets text and pictures for all the UI components of the custom listview
+     * @param position
+     * @param convertView
+     * @param parent
+     * @return
+     */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View newView = convertView;
@@ -49,6 +56,9 @@ public class CustomLVAdapter extends ArrayAdapter {
         return newView;
     }
 
+    /**
+     * Custom class that holds the UI objects that are in the listview
+     */
     class ViewHolder {
         TextView txtTitle;
         TextView txtLocation;
