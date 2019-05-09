@@ -125,16 +125,22 @@ public class SingleEventPage extends AppCompatActivity {
             if (!isEventAlreadyAdded) {
                 launchAddToCalendarIntent();
             } else {
-                //TODO: ask them if they want to add it again, and if so:  launchAddToCalendarIntent(event);
                 AlertDialog alertDialog = new AlertDialog.Builder(SingleEventPage.this).create();
                 alertDialog.setTitle("Event already in calendar");
                 alertDialog.setMessage("This event should have already been added.");
+                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Edit event",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                launchAddToCalendarIntent();
+                            }
+                        });
                 alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
                             }
                         });
+
                 alertDialog.show();
             }
         }
@@ -145,14 +151,12 @@ public class SingleEventPage extends AppCompatActivity {
         //  code used from https:stackoverflow.com/questions/3721963/how-to-add-calendar-events-in-android
         Intent intent = new Intent(Intent.ACTION_INSERT)
                 .setData(CalendarContract.Events.CONTENT_URI)
-                //need to change this to start time and end time still, date isnt working
                 .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, event.getCalStart().getTimeInMillis())
                 .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, event.getCalStart().getTimeInMillis() + event.getDuration() * 60 * 1000)
                 .putExtra(CalendarContract.Events.TITLE, event.getName())
                 .putExtra(CalendarContract.Events.DESCRIPTION, event.getDescription())
                 .putExtra(CalendarContract.Events.EVENT_LOCATION, event.getLocation())
                 .putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY);
-        //map.put(event.getName(), event);
         startActivity(intent);
     }
 
