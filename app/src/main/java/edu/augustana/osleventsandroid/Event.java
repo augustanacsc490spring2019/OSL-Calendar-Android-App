@@ -50,6 +50,10 @@ public class Event implements Serializable, Comparable<Event> {
         this.name = name;
     }
 
+    public void setImg(byte[] img) {
+        this.img = img;
+    }
+
     public String getLocation() {
         return location;
     }

@@ -1,6 +1,9 @@
 package edu.augustana.osleventsandroid;
 
 import android.Manifest;
+import android.graphics.BitmapFactory;
+import android.graphics.Bitmap;
+
 import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,7 +21,8 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
-
+import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -47,6 +51,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -239,8 +244,35 @@ public class FindEvents extends AppCompatActivity {
                                 public void onItemClick(AdapterView adapter, View v, int position, long arg3) {
                                     Event choosenEvent = events.get(position);
                                     Intent intent = new Intent(FindEvents.this, SingleEventPage.class);
-                                    intent.putExtra("choosenEvent",choosenEvent);
-                                    startActivity(intent);
+                                    byte[] img=choosenEvent.getImg();
+                                    while(img.length>(1000*1000)){
+
+                                        // PNG has not losses, it just ignores this field when compressing
+                                        final int COMPRESS_QUALITY = 0;
+
+                                        // Get the bitmap from byte array since, the bitmap has the the resize function
+                                        Bitmap bitmapImage = (BitmapFactory.decodeByteArray(img, 0, img.length));
+
+
+                                        // New bitmap with the correct size, may not return a null object
+                                        Bitmap mutableBitmapImage = Bitmap.createScaledBitmap(bitmapImage,bitmapImage.getWidth()/2, bitmapImage.getHeight()/2, false);
+
+                                        // Get the byte array from tbe bitmap to be returned
+                                        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                                        mutableBitmapImage.compress(Bitmap.CompressFormat.PNG, 0 , outputStream);
+
+                                        if (mutableBitmapImage != bitmapImage) {
+                                            mutableBitmapImage.recycle();
+                                        } // else they are the same, just recycle once
+
+                                        bitmapImage.recycle();
+                                        choosenEvent.setImg(outputStream.toByteArray());
+                                        img=choosenEvent.getImg();
+                                        System.out.println(img.length);
+                                    }
+                                        intent.putExtra("choosenEvent", choosenEvent);
+                                        startActivity(intent);
+
 
                                 }
                             });
