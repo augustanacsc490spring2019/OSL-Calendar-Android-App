@@ -63,6 +63,7 @@ public class FindEvents extends AppCompatActivity {
     private RelativeLayout settingsView;
     private BottomNavigationView navigation;
     private ArrayList<Event> events;
+    private ArrayList<Event> displayedEvents;
     private CustomLVAdapter customLVAdapter;
     private DatabaseReference database;
     private RelativeLayout progressBar;
@@ -72,6 +73,7 @@ public class FindEvents extends AppCompatActivity {
     private LinearLayout linear_layout;
     private RelativeLayout relative_layout;
     private RadioGroup radioGroup;
+    private int selectedSort;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -104,7 +106,9 @@ public class FindEvents extends AppCompatActivity {
         eventslv=(ListView) findViewById(R.id.listViewEvents);
         settingsView=(RelativeLayout) findViewById(R.id.settingsView);
         events=new ArrayList<Event>();
-        customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
+        selectedSort=0;
+        displayedEvents=new ArrayList<Event>();
+        customLVAdapter=new CustomLVAdapter(FindEvents.this, displayedEvents);
         databaseListener();
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -236,13 +240,15 @@ public class FindEvents extends AppCompatActivity {
                             }
                             events.add(event);
                             Collections.sort(events, new DateSorter());
-                            customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
+                            displayedEvents.clear();
+                            displayedEvents.addAll(events);
+                            customLVAdapter=new CustomLVAdapter(FindEvents.this, displayedEvents);
                             eventslv.setAdapter(customLVAdapter);
                             progressBar.setVisibility(View.GONE);
                             eventslv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                 @Override
                                 public void onItemClick(AdapterView adapter, View v, int position, long arg3) {
-                                    Event choosenEvent = events.get(position);
+                                    Event choosenEvent = displayedEvents.get(position);
                                     Intent intent = new Intent(FindEvents.this, SingleEventPage.class);
                                     byte[] img=choosenEvent.getImg();
                                     while(img.length>(1000*1000)){
@@ -310,7 +316,7 @@ public class FindEvents extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.sort_options, menu);
         item = menu.findItem(R.id.spinner);
         Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
-        String[] spinner_list_item_array={"A-Z","Z-A", "Soonest", "Group"};
+        String[] spinner_list_item_array={"Soonest First","A-Z","Z-A","Group"};
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.my_spinner_layout, spinner_list_item_array);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
@@ -319,23 +325,8 @@ public class FindEvents extends AppCompatActivity {
 
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
-                if(position==0){
-                    Collections.sort(events);
-                    customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
-                    eventslv.setAdapter(customLVAdapter);
-                }else if(position==1){
-                    Collections.sort(events, Collections.<Event>reverseOrder());
-                    customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
-                    eventslv.setAdapter(customLVAdapter);
-                }else if(position==2){
-                    Collections.sort(events, new DateSorter());
-                    customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
-                    eventslv.setAdapter(customLVAdapter);
-                }else if(position==3){
-                    Collections.sort(events, new GroupSorter());
-                    customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
-                    eventslv.setAdapter(customLVAdapter);
-                }
+               selectedSort=position;
+               sorting();
             }
 
             public void onNothingSelected(AdapterView<?> parent) {
@@ -349,7 +340,7 @@ public class FindEvents extends AppCompatActivity {
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                ArrayList<Event> searchedEvents = new ArrayList<Event>();
+               displayedEvents.clear();
                 for(int i = 0; i< events.size();i++){
                     Event currentEvent = events.get(i);
                     String lowerCaseQuery = query.toLowerCase();
@@ -357,16 +348,29 @@ public class FindEvents extends AppCompatActivity {
                             currentEvent.getLocation().toLowerCase().contains(lowerCaseQuery) ||
                             currentEvent.getTags().toLowerCase().contains(lowerCaseQuery) ||
                             currentEvent.getGroup().toLowerCase().contains(lowerCaseQuery)) {
-                        searchedEvents.add(events.get(i));
+                        displayedEvents.add(events.get(i));
                     }
                 }
-                Collections.sort(searchedEvents);
-                customLVAdapter=new CustomLVAdapter(FindEvents.this, searchedEvents);
-                eventslv.setAdapter(customLVAdapter);
+                sorting();
                 return false;
             }
             @Override
-            public boolean onQueryTextChange(String text) {
+            public boolean onQueryTextChange(String query) {
+
+               displayedEvents.clear();
+                for(int i = 0; i< events.size();i++){
+                    Event currentEvent = events.get(i);
+                    String lowerCaseQuery = query.toLowerCase();
+                    if(currentEvent.getName().toLowerCase().contains(lowerCaseQuery) ||
+                            currentEvent.getLocation().toLowerCase().contains(lowerCaseQuery) ||
+                            currentEvent.getTags().toLowerCase().contains(lowerCaseQuery) ||
+                            currentEvent.getGroup().toLowerCase().contains(lowerCaseQuery)) {
+                        displayedEvents.add(events.get(i));
+                    }
+                }
+                System.out.println("\n\n/n/n/n/n/n/");
+                System.out.println(displayedEvents);
+                sorting();
                 return false;
             }
         });
@@ -375,9 +379,9 @@ public class FindEvents extends AppCompatActivity {
         searchBar.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                Collections.sort(events);
-                customLVAdapter=new CustomLVAdapter(FindEvents.this, events);
-                eventslv.setAdapter(customLVAdapter);
+                displayedEvents.clear();
+                displayedEvents.addAll(events);
+                sorting();
                 return false;
             }
         });
@@ -436,6 +440,26 @@ public class FindEvents extends AppCompatActivity {
                 relative_layout.setBackgroundColor(Theme.getBackgroundColor());
             }
         });
+    }
+
+    public void sorting() {
+        if (selectedSort == 1) {
+            Collections.sort(displayedEvents);
+            customLVAdapter = new CustomLVAdapter(FindEvents.this, displayedEvents);
+            eventslv.setAdapter(customLVAdapter);
+        } else if (selectedSort == 2) {
+            Collections.sort(displayedEvents, Collections.<Event>reverseOrder());
+            customLVAdapter = new CustomLVAdapter(FindEvents.this, displayedEvents);
+            eventslv.setAdapter(customLVAdapter);
+        } else if (selectedSort == 0) {
+            Collections.sort(displayedEvents, new DateSorter());
+            customLVAdapter = new CustomLVAdapter(FindEvents.this, displayedEvents);
+            eventslv.setAdapter(customLVAdapter);
+        } else if (selectedSort == 3) {
+            Collections.sort(displayedEvents, new GroupSorter());
+            customLVAdapter = new CustomLVAdapter(FindEvents.this, displayedEvents);
+            eventslv.setAdapter(customLVAdapter);
+        }
     }
 
 }
