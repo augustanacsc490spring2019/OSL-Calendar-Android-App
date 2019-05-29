@@ -5,11 +5,22 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.Result;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -21,6 +32,7 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 public class QrCodeScanner extends AppCompatActivity implements ZXingScannerView.ResultHandler {
     //Data fields
     private ZXingScannerView mScannerView;
+    private String eventTitle;
 
     @Override
     public void onCreate(Bundle state) {
@@ -81,38 +93,92 @@ public class QrCodeScanner extends AppCompatActivity implements ZXingScannerView
 
     /**
      * Action once qr code has been scanned
-     * @param rawResult the result code from the QR code
+     * @param rawResult the result data from the QR code
      */
     @Override
     public void handleResult(Result rawResult) {
+        final Result result=rawResult;
 
-       final Result result=rawResult;
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(true);
-        builder.setTitle("Open URL");
-        builder.setMessage("Check into the event? You will be redirected to URL.");
-        builder.setPositiveButton("Confirm",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent();
-                        intent.putExtra("QR Code", result.getText());
-                        setResult(RESULT_OK, intent);
-                        finish();
-                    }
-                });
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+        String userEmail = mAuth.getCurrentUser().getEmail();
+        final String user = userEmail.substring(0, userEmail.indexOf('@'));
+
+        // currently the QR code contains a whole URL of the form:
+        //    https://osl-events-app.firebaseapp.com/event?id=-Lfzqf1JrBve4PYB9m0Y&name=Team+C+Event
+        // we just want to extract the event ID out of it.
+        String url = result.getText();
+        final String eventID = url.substring(url.lastIndexOf("id=") + 3, url.lastIndexOf("&name="));
+
+        // below we read the official event name from the database,
+        // and if that's successful, then we add the user to the list of attendees in the DB
+        final DatabaseReference eventDBRef = FirebaseDatabase.getInstance().getReference("current-events/" + eventID);
+        eventDBRef.child("name").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                onResume();
+            public void onDataChange(DataSnapshot snapshot) {
+                final String eventTitle = (String) snapshot.getValue();
+                eventDBRef.child("users").child(user).setValue(true)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                displayConfirmationDialog(user, eventTitle, true);
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("QRCodeScanner", "Database Write Error: " + e);
+                                displayConfirmationDialog(user, eventTitle, false);
+                            }
+                        });
+
+
+                Log.d("QRCodeScanner", "snapshot" + eventTitle);
             }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("QRCodeScanner", "Database Read Error: " + databaseError);
+                displayConfirmationDialog(user, eventTitle, false);
+            }
+        });
+
+
+
+
+        // TODO: instead of opening web browser, we want to:
+        //  a) extract the ID from the url
+        //  b) create a new entry in firebase at /current-events/EVENTID/users/emailstart
+        //  c) on successful completion of part b, pull the name of the event FROM firebase,
+        //     and tell the user they were checked into event named X.
+        //  d) go back to the main activity?
+
+
+    }
+
+    private void displayConfirmationDialog(String userName, String eventTitle, boolean successful) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        String title;
+        String message;
+        if (successful) {
+            title = "Checked In";
+            message = "You have checked into " + eventTitle + " as " + userName;
+        } else {
+            title = "Check In Failed";
+            message = "You were unable to check into " + eventTitle + ". Check your internet connection and try again.";
+        }
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(QrCodeScanner.this, FindEvents.class);
+                startActivity(intent);
+            }
         });
 
         AlertDialog dialog = builder.create();
         dialog.show();
-
-
     }
 }
