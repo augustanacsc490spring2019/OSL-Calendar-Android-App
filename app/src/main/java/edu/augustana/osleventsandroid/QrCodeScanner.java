@@ -32,7 +32,6 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 public class QrCodeScanner extends AppCompatActivity implements ZXingScannerView.ResultHandler {
     //Data fields
     private ZXingScannerView mScannerView;
-    private String eventTitle;
 
     @Override
     public void onCreate(Bundle state) {
@@ -108,68 +107,54 @@ public class QrCodeScanner extends AppCompatActivity implements ZXingScannerView
         //    https://osl-events-app.firebaseapp.com/event?id=-Lfzqf1JrBve4PYB9m0Y&name=Team+C+Event
         // we just want to extract the event ID out of it.
         String url = result.getText();
+        Log.d("QRCodeScanner", "url" + url);
         final String eventID = url.substring(url.lastIndexOf("id=") + 3, url.lastIndexOf("&name="));
 
         // below we read the official event name from the database,
         // and if that's successful, then we add the user to the list of attendees in the DB
         final DatabaseReference eventDBRef = FirebaseDatabase.getInstance().getReference("current-events/" + eventID);
-        eventDBRef.child("name").addValueEventListener(new ValueEventListener() {
+        eventDBRef.child("name").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                final String eventTitle = (String) snapshot.getValue();
-                eventDBRef.child("users").child(user).setValue(true)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                displayConfirmationDialog(user, eventTitle, true);
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.e("QRCodeScanner", "Database Write Error: " + e);
-                                displayConfirmationDialog(user, eventTitle, false);
-                            }
-                        });
+                if (snapshot.exists()) {
+                    final String eventTitle = (String) snapshot.getValue();
+                    eventDBRef.child("users").child(user).setValue(true)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    String message = "You have checked into " + eventTitle + " as " + user;
+                                    displayConfirmationDialog("Checked In", message);
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.e("QRCodeScanner", "Database Write Error: " + e);
+                                    String message = "You were unable to check into " + eventTitle + ". Check your internet connection and try again.";
+                                    displayConfirmationDialog("Check In Failed", message);
+                                }
+                            });
+                } else {
+                    String message = "Sorry, this event is in the past or no longer exists!";
+                    displayConfirmationDialog("Check In Failed", message);
+                }
 
-
-                Log.d("QRCodeScanner", "snapshot" + eventTitle);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.e("QRCodeScanner", "Database Read Error: " + databaseError);
-                displayConfirmationDialog(user, eventTitle, false);
+                String message = "We were unable to access this event. Check your internet connection and try again.";
+                displayConfirmationDialog("Database Error", message);
             }
         });
-
-
-
-
-        // TODO: instead of opening web browser, we want to:
-        //  a) extract the ID from the url
-        //  b) create a new entry in firebase at /current-events/EVENTID/users/emailstart
-        //  c) on successful completion of part b, pull the name of the event FROM firebase,
-        //     and tell the user they were checked into event named X.
-        //  d) go back to the main activity?
-
-
     }
 
-    private void displayConfirmationDialog(String userName, String eventTitle, boolean successful) {
+    private void displayConfirmationDialog(String dialogTitle, String dialogMessage) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
-        String title;
-        String message;
-        if (successful) {
-            title = "Checked In";
-            message = "You have checked into " + eventTitle + " as " + userName;
-        } else {
-            title = "Check In Failed";
-            message = "You were unable to check into " + eventTitle + ". Check your internet connection and try again.";
-        }
-        builder.setTitle(title);
-        builder.setMessage(message);
+        builder.setTitle(dialogTitle);
+        builder.setMessage(dialogMessage);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
