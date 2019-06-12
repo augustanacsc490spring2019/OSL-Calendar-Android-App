@@ -4,11 +4,9 @@ import android.Manifest;
 import android.graphics.BitmapFactory;
 import android.graphics.Bitmap;
 
-import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,14 +18,17 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.Menu;
 import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
+
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -46,12 +47,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.database.collection.LLRBNode;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -72,9 +71,12 @@ public class FindEvents extends AppCompatActivity {
     private RadioButton checkedRadioButton;
     private LinearLayout linear_layout;
     private RelativeLayout relative_layout;
+    private RelativeLayout relLayout;
     private RadioGroup radioGroup;
     private int selectedSort;
 
+    private RecyclerView eventsView;
+    private StaggeredGridLayoutManager gridLayoutManager;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -114,6 +116,13 @@ public class FindEvents extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setBackgroundColor(Theme.getButtonColor());
+        eventsView = findViewById(R.id.events_view);
+        if (eventsView != null) {
+            //to enable optimization of Recycler View
+            eventsView.setHasFixedSize(true);
+        }
+        gridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        eventsView.setLayoutManager(gridLayoutManager);
     }
 
     public void moveToSearch() {
@@ -217,27 +226,14 @@ public class FindEvents extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 events.clear();
                 for(DataSnapshot snapshot: dataSnapshot.getChildren()){
-                   // Event event= snapshot.getValue(Event.class);
-                    final String name=snapshot.child("name").getValue().toString();
-                    final String startDate=snapshot.child("startDate").getValue().toString();
-                    final int duration=Integer.parseInt(snapshot.child("duration").getValue().toString());
-                    final String location=snapshot.child("location").getValue().toString();
-                    final String organization=snapshot.child("organization").getValue().toString();
-                    final String tags=snapshot.child("tags").getValue().toString();
-                    final String description=snapshot.child("description").getValue().toString();
-                    String imgid=snapshot.child("imgid").getValue().toString();
-                    StorageReference storage = FirebaseStorage.getInstance().getReference().child("Images").child(imgid+".jpg");
+                    final Event event = snapshot.getValue(Event.class);
+
+                    StorageReference storage = FirebaseStorage.getInstance().getReference().child("Images").child(event.getImgid()+".jpg");
                     final long ONE_MEGABYTE = Integer.MAX_VALUE;
                     storage.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                         @Override
                         public void onSuccess(byte[] bytes) {
-
-                            Event event= null;
-                            try {
-                                event = new Event(name,location, startDate, duration, organization, tags, description,bytes);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            event.setImgBytes(bytes);
                             events.add(event);
                             Collections.sort(events, new DateSorter());
                             displayedEvents.clear();
@@ -248,9 +244,9 @@ public class FindEvents extends AppCompatActivity {
                             eventslv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                 @Override
                                 public void onItemClick(AdapterView adapter, View v, int position, long arg3) {
-                                    Event choosenEvent = displayedEvents.get(position);
+                                    Event chosenEvent = displayedEvents.get(position);
                                     Intent intent = new Intent(FindEvents.this, SingleEventPage.class);
-                                    byte[] img=choosenEvent.getImg();
+                                    byte[] img=chosenEvent.getImgBytes();
                                     while(img.length>(1000*1000)){
 
                                         // PNG has not losses, it just ignores this field when compressing
@@ -272,11 +268,11 @@ public class FindEvents extends AppCompatActivity {
                                         } // else they are the same, just recycle once
 
                                         bitmapImage.recycle();
-                                        choosenEvent.setImg(outputStream.toByteArray());
-                                        img=choosenEvent.getImg();
+                                        chosenEvent.setImgBytes(outputStream.toByteArray());
+                                        img=chosenEvent.getImgBytes();
                                         System.out.println(img.length);
                                     }
-                                        intent.putExtra("choosenEvent", choosenEvent);
+                                        intent.putExtra("choosenEvent", chosenEvent);
                                         startActivity(intent);
 
 
@@ -347,7 +343,7 @@ public class FindEvents extends AppCompatActivity {
                     if(currentEvent.getName().toLowerCase().contains(lowerCaseQuery) ||
                             currentEvent.getLocation().toLowerCase().contains(lowerCaseQuery) ||
                             currentEvent.getTags().toLowerCase().contains(lowerCaseQuery) ||
-                            currentEvent.getGroup().toLowerCase().contains(lowerCaseQuery)) {
+                            currentEvent.getOrganization().toLowerCase().contains(lowerCaseQuery)) {
                         displayedEvents.add(events.get(i));
                     }
                 }
@@ -364,7 +360,7 @@ public class FindEvents extends AppCompatActivity {
                     if(currentEvent.getName().toLowerCase().contains(lowerCaseQuery) ||
                             currentEvent.getLocation().toLowerCase().contains(lowerCaseQuery) ||
                             currentEvent.getTags().toLowerCase().contains(lowerCaseQuery) ||
-                            currentEvent.getGroup().toLowerCase().contains(lowerCaseQuery)) {
+                            currentEvent.getOrganization().toLowerCase().contains(lowerCaseQuery)) {
                         displayedEvents.add(events.get(i));
                     }
                 }
@@ -397,6 +393,7 @@ public class FindEvents extends AppCompatActivity {
         radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
         checkedRadioButton = (RadioButton) radioGroup.findViewById(radioGroup.getCheckedRadioButtonId());
         relative_layout = findViewById(R.id.settingsView);
+        relLayout = findViewById(R.id.relLayout);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
         {
             public void onCheckedChanged(RadioGroup radioGroup, int checkedId)
@@ -414,6 +411,8 @@ public class FindEvents extends AppCompatActivity {
                    Theme.seaBlueTheme();
                }else if(checkedRadioButton.getId() == radioGroup.findViewById(R.id.theme4).getId()){
                    Theme.twilightPurpleTheme();
+               }else if(checkedRadioButton.getId() == radioGroup.findViewById(R.id.theme5).getId()){
+                   Theme.augieTheme();
                }
                ConstraintLayout constraintLayout = findViewById(R.id.container);
                TextView themeTitle = findViewById(R.id.themeTitle);
@@ -431,6 +430,8 @@ public class FindEvents extends AppCompatActivity {
                 theme3.setTextColor(Theme.getTextColor());
                 RadioButton theme4  = findViewById(R.id.theme4);
                 theme4.setTextColor(Theme.getTextColor());
+                RadioButton theme5 = findViewById(R.id.theme5);
+                theme5.setTextColor(Theme.getTextColor());
                 BottomNavigationView navigation = findViewById(R.id.navigation);
                 navigation.setBackgroundColor(Theme.getButtonColor());
 
@@ -438,6 +439,8 @@ public class FindEvents extends AppCompatActivity {
 
                 constraintLayout.setBackgroundColor(Theme.getBackgroundColor());
                 relative_layout.setBackgroundColor(Theme.getBackgroundColor());
+                //relLayout.setBackgroundColor(Theme.getBackgroundColor());
+
             }
         });
     }
@@ -462,4 +465,25 @@ public class FindEvents extends AppCompatActivity {
         }
     }
 
+    public static class EventsViewHolder extends RecyclerView.ViewHolder {
+
+        TextView txtTitle;
+        TextView txtLocation;
+        TextView txtDate;
+        TextView txtDuration;
+        TextView txtOrganization;
+        ImageView img;
+        RelativeLayout relLayout;
+
+        public EventsViewHolder(View v) {
+            super(v);
+            this.txtTitle = (TextView) v.findViewById(R.id.txtTitle);
+            this.txtLocation = (TextView) v.findViewById(R.id.txtLocation);
+            this.txtDate = (TextView) v.findViewById(R.id.txtDate);
+            this.txtDuration = (TextView) v.findViewById(R.id.txtDuration);
+            this.txtOrganization = (TextView) v.findViewById(R.id.txtOrganization);
+            this.img = (ImageView) v.findViewById(R.id.eventImg);
+            this.relLayout = (RelativeLayout) v.findViewById(R.id.relLayout);
+        }
+    }
 }

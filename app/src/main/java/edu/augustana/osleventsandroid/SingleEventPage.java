@@ -65,10 +65,10 @@ public class SingleEventPage extends AppCompatActivity {
         txtLocation.setText(event.getLocation());
         txtDate.setText(event.getStartDate());
         txtTime.setText(event.getStartTime() + " - " + event.getEndTime());
-        txtGroup.setText(event.getGroup());
+        txtGroup.setText(event.getOrganization());
         txtDescription.setText(event.getDescription());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        img.setImageBitmap(BitmapFactory.decodeByteArray(event.getImg(), 0, event.getImg().length));
+        img.setImageBitmap(BitmapFactory.decodeByteArray(event.getImgBytes(), 0, event.getImgBytes().length));
 
 
         Button btn_calendar = (Button) findViewById(R.id.btn_calendar);

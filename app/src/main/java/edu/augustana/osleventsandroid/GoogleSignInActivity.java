@@ -28,7 +28,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -87,7 +86,7 @@ public class GoogleSignInActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (firebaseAuth.getCurrentUser() != null && FirebaseAuth.getInstance().getCurrentUser().getEmail().toLowerCase().contains("augustana.edu")) {
 
-                    startActivityForResult(new Intent(GoogleSignInActivity.this, FindEvents.class),START_ACTIVITY_CODE);
+                    startActivityForResult(new Intent(GoogleSignInActivity.this, TestFirebaseUIActivity.class),START_ACTIVITY_CODE);
                 } else if (firebaseAuth.getCurrentUser() != null && !FirebaseAuth.getInstance().getCurrentUser().getEmail().toLowerCase().contains("augustana.edu")) {
                     signInButton.setEnabled(true);
                     aboutPageButton.setEnabled(true);

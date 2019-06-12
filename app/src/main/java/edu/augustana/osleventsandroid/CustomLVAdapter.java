@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.osleventsandroid.R;
@@ -47,12 +48,12 @@ public class CustomLVAdapter extends ArrayAdapter {
             viewHolder = (ViewHolder) newView.getTag();
         }
         Event event = events.get(position);
-        viewHolder.img.setImageBitmap(BitmapFactory.decodeByteArray(event.getImg(), 0, event.getImg().length));
+        viewHolder.img.setImageBitmap(BitmapFactory.decodeByteArray(event.getImgBytes(), 0, event.getImgBytes().length));
         viewHolder.txtTitle.setText(event.getName());
         viewHolder.txtLocation.setText(event.getLocation());
         viewHolder.txtDate.setText(event.getStartDate());
         viewHolder.txtDuration.setText(event.getStartTime() + "-" + event.getEndTime());
-        viewHolder.txtOrganization.setText(event.getGroup());
+        viewHolder.txtOrganization.setText(event.getOrganization());
         return newView;
     }
 
@@ -66,6 +67,7 @@ public class CustomLVAdapter extends ArrayAdapter {
         TextView txtDuration;
         TextView txtOrganization;
         ImageView img;
+        RelativeLayout relLayout;
 
         ViewHolder(View v) {
             this.txtTitle = (TextView) v.findViewById(R.id.txtTitle);
@@ -74,6 +76,7 @@ public class CustomLVAdapter extends ArrayAdapter {
             this.txtDuration = (TextView) v.findViewById(R.id.txtDuration);
             this.txtOrganization = (TextView) v.findViewById(R.id.txtOrganization);
             this.img = (ImageView) v.findViewById(R.id.eventImg);
+            this.relLayout = (RelativeLayout) v.findViewById(R.id.relLayout);
 
         }
     }

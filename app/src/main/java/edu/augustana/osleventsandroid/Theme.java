@@ -12,6 +12,15 @@ public class Theme {
     private static int checkboxBackground = Color.WHITE;
     private static int buttonColor = Color.LTGRAY;
 
+    public static void augieTheme() {
+        backgroundColor = Color.rgb(32, 85, 138);
+        darkerBackground = Color.rgb(26, 68, 110);
+        textColor = Color.rgb(255, 221, 0);
+        checkboxColor = Color.rgb(32, 85, 138);
+        checkboxBackground = Color.WHITE;
+        buttonColor = Color.rgb(255, 221, 0);
+    }
+
     public static void whiteTheme() {
         backgroundColor = Color.rgb(255, 255, 255);
         darkerBackground = Color.rgb(211, 211, 211);
