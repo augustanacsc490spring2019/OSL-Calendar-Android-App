@@ -2,12 +2,16 @@ package edu.augustana.osleventsandroid;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
@@ -17,6 +21,7 @@ import android.widget.TextView;
 
 import com.example.osleventsandroid.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -35,8 +40,8 @@ public class TestFirebaseUIActivity extends AppCompatActivity {
     private TextView tvNoMovies;
 
     //Get reference to database
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference mDatabaseReference = database.getReference();
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference mDatabaseReference = database.getReference();
 
     private static final String userID = "53";
 
@@ -62,6 +67,7 @@ public class TestFirebaseUIActivity extends AppCompatActivity {
         LinearLayoutManager linearManager = new LinearLayoutManager(TestFirebaseUIActivity.this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearManager);
 
+        Log.d("TestFirebaseUIActivity", "Adapter created");
         mRecyclerView.setAdapter(createAdapter(1));
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -82,38 +88,55 @@ public class TestFirebaseUIActivity extends AppCompatActivity {
         }
     }
 
+
+
     private FirebaseRecyclerAdapter createAdapter(int numItems) {
         Query query = mDatabaseReference.child("current-events").orderByChild("startDate").limitToFirst(numItems);
+        FirebaseRecyclerOptions<Event> options = new FirebaseRecyclerOptions.Builder<Event>()
+                .setQuery(query, Event.class)
+                .build();
         //Say Hello to our new FirebaseUI android Element, i.e., FirebaseRecyclerAdapter
-        FirebaseRecyclerAdapter<Event, EventViewHolder> adapter = new FirebaseRecyclerAdapter<Event, EventViewHolder>(
-                Event.class,
-                R.layout.custom_listview_event_layout,
-                EventViewHolder.class,
-                query
-        ){
+        FirebaseRecyclerAdapter<Event, EventViewHolder> adapter = new FirebaseRecyclerAdapter<Event, EventViewHolder>(options){
+            @NonNull
             @Override
-            protected void populateViewHolder(final EventViewHolder viewHolder, Event event, int position) {
+            public EventViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+                View view = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.custom_listview_event_layout, viewGroup, false);
+
+                return new EventViewHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull final EventViewHolder viewHolder, int position, @NonNull Event event) {
                 viewHolder.txtTitle.setText(event.getName());
                 viewHolder.txtLocation.setText(event.getLocation());
                 viewHolder.txtDate.setText(event.getStartDate());
-                viewHolder.txtDuration.setText(event.getStartTime() + "-" + event.getEndTime());
+                viewHolder.txtDuration.setText(event.getStartTimeText() + "-" + event.getEndTimeText());
                 viewHolder.txtOrganization.setText(event.getOrganization());
-                StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("Images").child(event.getImgid()+".jpg");
-                storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        Picasso.with(TestFirebaseUIActivity.this).load(uri.toString()).into(viewHolder.img);
-                    }
-                });
-
+                if (viewHolder.imgURL == null) {
+                    StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("Images").child(event.getImgid()+".jpg");
+                    storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            viewHolder.imgURL = uri.toString();
+                            Picasso.with(TestFirebaseUIActivity.this).load(uri.toString()).into(viewHolder.img);
+                            Log.d("TestFirebaseUIActivity", "Loading Image for: " + viewHolder.txtTitle.getText() + "\nURI: " + uri.toString());
+                        }
+                    });
+                } else {
+                    Picasso.with(TestFirebaseUIActivity.this).load(viewHolder.imgURL).into(viewHolder.img);
+                }
             }
+
+
         };
 
+        adapter.startListening();
         return adapter;
     }
 
 
-    private static class EventViewHolder extends RecyclerView.ViewHolder {
+    public static class EventViewHolder extends RecyclerView.ViewHolder {
 
         TextView txtTitle;
         TextView txtLocation;
@@ -121,6 +144,7 @@ public class TestFirebaseUIActivity extends AppCompatActivity {
         TextView txtDuration;
         TextView txtOrganization;
         ImageView img;
+        String imgURL;
         RelativeLayout relLayout;
 
         public EventViewHolder(View v) {

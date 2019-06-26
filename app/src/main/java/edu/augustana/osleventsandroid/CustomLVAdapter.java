@@ -48,11 +48,11 @@ public class CustomLVAdapter extends ArrayAdapter {
             viewHolder = (ViewHolder) newView.getTag();
         }
         Event event = events.get(position);
-        viewHolder.img.setImageBitmap(BitmapFactory.decodeByteArray(event.getImgBytes(), 0, event.getImgBytes().length));
+        //viewHolder.img.setImageBitmap(BitmapFactory.decodeByteArray(event.getImgBytes(), 0, event.getImgBytes().length));
         viewHolder.txtTitle.setText(event.getName());
         viewHolder.txtLocation.setText(event.getLocation());
         viewHolder.txtDate.setText(event.getStartDate());
-        viewHolder.txtDuration.setText(event.getStartTime() + "-" + event.getEndTime());
+        viewHolder.txtDuration.setText(event.getStartTimeText() + "-" + event.getEndTimeText());
         viewHolder.txtOrganization.setText(event.getOrganization());
         return newView;
     }

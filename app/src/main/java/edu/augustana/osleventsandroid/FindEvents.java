@@ -1,8 +1,6 @@
 package edu.augustana.osleventsandroid;
 
 import android.Manifest;
-import android.graphics.BitmapFactory;
-import android.graphics.Bitmap;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,15 +16,16 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
-import java.io.ByteArrayOutputStream;
 
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -35,29 +34,26 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.osleventsandroid.R;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class FindEvents extends AppCompatActivity {
 
     final int QRCODE = 0;
-    final int SETTINGSCODE = 3;
     private TextView mTextMessage;
     private ListView eventslv;
     private RelativeLayout settingsView;
@@ -103,16 +99,16 @@ public class FindEvents extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_events);
-        progressBar=(RelativeLayout) findViewById(R.id.progressLayout);
-        progressBar.setVisibility(View.VISIBLE);
-        database=FirebaseDatabase.getInstance().getReference("current-events");
-        eventslv=(ListView) findViewById(R.id.listViewEvents);
+        //progressBar=(RelativeLayout) findViewById(R.id.progressLayout);
+        //progressBar.setVisibility(View.GONE);
+        database=FirebaseDatabase.getInstance().getReference();
+        //eventslv=(ListView) findViewById(R.id.listViewEvents);
         settingsView=(RelativeLayout) findViewById(R.id.settingsView);
-        events=new ArrayList<Event>();
+        /*events=new ArrayList<Event>();
         selectedSort=0;
         displayedEvents=new ArrayList<Event>();
         customLVAdapter=new CustomLVAdapter(FindEvents.this, displayedEvents);
-        databaseListener();
+        databaseListener();*/
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         BottomNavigationView navigation = findViewById(R.id.navigation);
@@ -123,13 +119,97 @@ public class FindEvents extends AppCompatActivity {
             eventsView.setHasFixedSize(true);
         }
         gridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        LinearLayoutManager linearManager = new LinearLayoutManager(FindEvents.this, LinearLayoutManager.VERTICAL, false);
         eventsView.setLayoutManager(gridLayoutManager);
+        eventsView.setLayoutManager(linearManager);
+
+        createAdapter();
+
+        Log.d("FindEvents", "OnCreate finished");
+    }
+
+    private void createAdapter() {
+        Query query = database.child("/current-events").orderByChild("startDate");
+        FirebaseRecyclerOptions<Event> options = new FirebaseRecyclerOptions.Builder<Event>()
+                .setQuery(query, Event.class)
+                .build();
+        //Say Hello to our new FirebaseUI android Element, i.e., FirebaseRecyclerAdapter
+        FirebaseRecyclerAdapter<Event, FindEvents.EventViewHolder> adapter = new FirebaseRecyclerAdapter<Event, FindEvents.EventViewHolder>(options){
+
+
+            @NonNull
+            @Override
+            public EventViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+                View view = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.custom_listview_event_layout, viewGroup, false);
+
+                return new FindEvents.EventViewHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull final EventViewHolder viewHolder, int position, @NonNull final Event event) {
+                viewHolder.txtTitle.setText(event.getName());
+                viewHolder.txtLocation.setText(event.getLocation());
+                viewHolder.txtDate.setText(event.getStartDate());
+                viewHolder.txtDuration.setText(event.getStartTimeText() + "-" + event.getEndTimeText());
+                viewHolder.txtOrganization.setText(event.getOrganization());
+                if (viewHolder.imgURL == null) {
+                    StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("Images").child(event.getImgid()+".jpg");
+                    storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            viewHolder.imgURL = uri.toString();
+                            Picasso.with(FindEvents.this).load(uri.toString()).into(viewHolder.img);
+                            Log.d("FindEvents", "Loading Image for: " + viewHolder.txtTitle.getText() + "\nURI: " + uri.toString());
+                        }
+                    });
+                } else {
+                    Picasso.with(FindEvents.this).load(viewHolder.imgURL).into(viewHolder.img);
+                }
+                viewHolder.relLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(FindEvents.this, SingleEventPage.class);
+                        intent.putExtra("chosenEvent", event);
+                        startActivity(intent);
+                    }
+                });
+            }
+        };
+
+        Log.d("FindEvents", "Adapter Created");
+
+        adapter.startListening();
+        eventsView.setAdapter(adapter);    }
+
+    private static class EventViewHolder extends RecyclerView.ViewHolder {
+
+        TextView txtTitle;
+        TextView txtLocation;
+        TextView txtDate;
+        TextView txtDuration;
+        TextView txtOrganization;
+        ImageView img;
+        String imgURL;
+        RelativeLayout relLayout;
+
+        public EventViewHolder(View v) {
+            super(v);
+            this.txtTitle = (TextView) v.findViewById(R.id.txtTitle);
+            this.txtLocation = (TextView) v.findViewById(R.id.txtLocation);
+            this.txtDate = (TextView) v.findViewById(R.id.txtDate);
+            this.txtDuration = (TextView) v.findViewById(R.id.txtDuration);
+            this.txtOrganization = (TextView) v.findViewById(R.id.txtOrganization);
+            this.img = (ImageView) v.findViewById(R.id.eventImg);
+            this.relLayout = (RelativeLayout) v.findViewById(R.id.relLayout);
+        }
     }
 
     public void moveToSearch() {
         settingsView.setVisibility(View.GONE);
-        eventslv.setVisibility(View.VISIBLE);
-        searchBar.setVisibility(View.VISIBLE);
+        //eventslv.setVisibility(View.VISIBLE);
+        //searchBar.setVisibility(View.VISIBLE);
+        eventsView.setVisibility(View.VISIBLE);
     }
 
     // Source: https://stackoverflow.com/questions/42275906/how-to-ask-runtime-permissions-for-camera
@@ -142,9 +222,10 @@ public class FindEvents extends AppCompatActivity {
     }
 
     public void moveToSettings() {
-        eventslv.setVisibility(View.GONE);
+        //eventslv.setVisibility(View.GONE);
         settingsView.setVisibility(View.VISIBLE);
         searchBar.setVisibility(View.GONE);
+        eventsView.setVisibility(View.GONE);
         startThemeListener();
     }
 
@@ -158,9 +239,6 @@ public class FindEvents extends AppCompatActivity {
                 String code=data.getStringExtra("QR Code");
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(code)));
             }
-        }
-        if (requestCode == SETTINGSCODE) {
-            navigation.setSelectedItemId(R.id.navigation_search);
         }
     }
 
@@ -221,7 +299,7 @@ public class FindEvents extends AppCompatActivity {
 
     }
 
-    public void databaseListener(){
+    /*public void databaseListener(){
         database.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -300,7 +378,7 @@ public class FindEvents extends AppCompatActivity {
         });
 
 
-    }
+    }*/
 
     /**
      * Adds a drop down for sorting in the top right action bar
@@ -369,9 +447,10 @@ public class FindEvents extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.settings:
-                eventslv.setVisibility(View.GONE);
+                //eventslv.setVisibility(View.GONE);
                 settingsView.setVisibility(View.VISIBLE);
-                searchBar.setVisibility(View.GONE);
+                //searchBar.setVisibility(View.GONE);
+                eventsView.setVisibility(View.GONE);
                 startThemeListener();
                 return true;
         }
@@ -428,7 +507,7 @@ public class FindEvents extends AppCompatActivity {
                 BottomNavigationView navigation = findViewById(R.id.navigation);
                 navigation.setBackgroundColor(Theme.getButtonColor());
 
-                ListView listOfEvents = findViewById(R.id.listViewEvents);
+                //ListView listOfEvents = findViewById(R.id.listViewEvents);
 
                 constraintLayout.setBackgroundColor(Theme.getBackgroundColor());
                 relative_layout.setBackgroundColor(Theme.getBackgroundColor());

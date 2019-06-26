@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.provider.CalendarContract.Events;
@@ -24,6 +25,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.example.osleventsandroid.R;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 import java.util.TreeMap;
@@ -60,16 +65,22 @@ public class SingleEventPage extends AppCompatActivity {
         map = new TreeMap();
 
         this.img = (ImageView) findViewById(R.id.img);
-        event = (Event) getIntent().getSerializableExtra("choosenEvent");
+        event = (Event) getIntent().getSerializableExtra("chosenEvent");
         txtName.setText(event.getName());
         txtLocation.setText(event.getLocation());
         txtDate.setText(event.getStartDate());
-        txtTime.setText(event.getStartTime() + " - " + event.getEndTime());
+        txtTime.setText(event.getStartTimeText() + " - " + event.getEndTimeText());
         txtGroup.setText(event.getOrganization());
         txtDescription.setText(event.getDescription());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        img.setImageBitmap(BitmapFactory.decodeByteArray(event.getImgBytes(), 0, event.getImgBytes().length));
 
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("Images").child(event.getImgid()+".jpg");
+        storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+             @Override
+             public void onSuccess(Uri uri) {
+                 Picasso.with(SingleEventPage.this).load(uri.toString()).into(img);
+             }
+         });
 
         Button btn_calendar = (Button) findViewById(R.id.btn_calendar);
         btn_calendar.setOnClickListener(new View.OnClickListener() {

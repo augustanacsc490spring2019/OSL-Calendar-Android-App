@@ -11,15 +11,19 @@ import java.text.SimpleDateFormat;
     particular event, and contains custom compare methods for the events.
  */
 public class Event implements Serializable, Comparable<Event> {
+
+    private static final SimpleDateFormat TIME_FORMATTER = new SimpleDateFormat("h:mm a");
+    private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("EEE MMM d, yyyy");
+
+
     private String description;
     private int duration;
-    private String imgid;
+    private String imgid; // Note: this field IS assigned when firebase creates the object
     private String location;
     private String name;
     private String organization;
     private String startDate;
     private String tags;
-    private byte[] imgBytes;
 
 
     @SuppressWarnings({"unused"}) // used by Firebase deserialization
@@ -33,14 +37,10 @@ public class Event implements Serializable, Comparable<Event> {
         this.organization = group;
         this.duration = duration;
         this.tags = tags;
-        this.imgBytes = img;
         this.description = description;
     }
 
-//Getters and setters
-    public byte[] getImgBytes() {
-        return imgBytes;
-    }
+    //Getters and setters
 
     public String getDescription() {
         return description;
@@ -54,17 +54,12 @@ public class Event implements Serializable, Comparable<Event> {
         this.name = name;
     }
 
-    public void setImgBytes(byte[] imgBytes) {
-        this.imgBytes = imgBytes;
-    }
-
     public String getLocation() {
         return location;
     }
 
     public String getStartDate() {
-        String[] calDatetime = startDate.split(" ");
-        return calDatetime[0];
+        return DATE_FORMATTER.format(getCalStart().getTime());
     }
 
     public String getImgid() {
@@ -75,21 +70,18 @@ public class Event implements Serializable, Comparable<Event> {
      *
      * @return string format of event start time
      */
-    public String getStartTime() {
-        Calendar start=getCalStart();
-        SimpleDateFormat df = new SimpleDateFormat("h:mm a");
-        return df.format(start.getTime());
+    public String getStartTimeText() {
+        return TIME_FORMATTER.format(getCalStart().getTime());
     }
 
     /**
      *
      * @return string format of the event end time
      */
-    public String getEndTime() {
+    public String getEndTimeText() {
         Calendar end=getCalStart();
         end.add(Calendar.MINUTE, duration);
-        SimpleDateFormat df = new SimpleDateFormat("h:mm a");
-        return df.format(end.getTime());
+        return TIME_FORMATTER.format(end.getTime());
     }
 
     public String getOrganization() {
