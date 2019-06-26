@@ -86,7 +86,7 @@ public class GoogleSignInActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (firebaseAuth.getCurrentUser() != null && FirebaseAuth.getInstance().getCurrentUser().getEmail().toLowerCase().contains("augustana.edu")) {
 
-                    startActivityForResult(new Intent(GoogleSignInActivity.this, TestFirebaseUIActivity.class),START_ACTIVITY_CODE);
+                    startActivityForResult(new Intent(GoogleSignInActivity.this, FindEvents.class),START_ACTIVITY_CODE);
                 } else if (firebaseAuth.getCurrentUser() != null && !FirebaseAuth.getInstance().getCurrentUser().getEmail().toLowerCase().contains("augustana.edu")) {
                     signInButton.setEnabled(true);
                     aboutPageButton.setEnabled(true);

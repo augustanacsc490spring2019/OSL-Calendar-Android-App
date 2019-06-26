@@ -115,9 +115,9 @@ public class Event implements Serializable, Comparable<Event> {
      * @return Calander object of date
      */
     public Calendar getCalStart() {
-        int month = Integer.parseInt(startDate.substring(0, 2)) - 1;
-        int day = Integer.parseInt(startDate.substring(3, 5));
-        int year = Integer.parseInt(startDate.substring(6, 10));
+        int year = Integer.parseInt(startDate.substring(0, 4)) - 1;
+        int month = Integer.parseInt(startDate.substring(5, 7));
+        int day = Integer.parseInt(startDate.substring(8, 10));
         int hour = Integer.parseInt(startDate.substring(11, 13));
         int min = Integer.parseInt(startDate.substring(14, 16));
         Calendar startTime = Calendar.getInstance();
