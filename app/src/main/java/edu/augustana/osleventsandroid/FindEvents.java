@@ -57,6 +57,7 @@ import java.util.Collections;
 public class FindEvents extends AppCompatActivity {
 
     final int QRCODE = 0;
+    final int SETTINGSCODE = 3;
     private TextView mTextMessage;
     private ListView eventslv;
     private RelativeLayout settingsView;
@@ -128,7 +129,6 @@ public class FindEvents extends AppCompatActivity {
     public void moveToSearch() {
         settingsView.setVisibility(View.GONE);
         eventslv.setVisibility(View.VISIBLE);
-        item.setVisible(true);
         searchBar.setVisibility(View.VISIBLE);
     }
 
@@ -144,10 +144,8 @@ public class FindEvents extends AppCompatActivity {
     public void moveToSettings() {
         eventslv.setVisibility(View.GONE);
         settingsView.setVisibility(View.VISIBLE);
-        item.setVisible(false);
         searchBar.setVisibility(View.GONE);
         startThemeListener();
-
     }
 
 
@@ -160,6 +158,9 @@ public class FindEvents extends AppCompatActivity {
                 String code=data.getStringExtra("QR Code");
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(code)));
             }
+        }
+        if (requestCode == SETTINGSCODE) {
+            navigation.setSelectedItemId(R.id.navigation_search);
         }
     }
 
@@ -310,27 +311,6 @@ public class FindEvents extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.sort_options, menu);
-        item = menu.findItem(R.id.spinner);
-        Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
-        String[] spinner_list_item_array={"Soonest First","A-Z","Z-A","Group"};
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.my_spinner_layout, spinner_list_item_array);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        //https://developer.android.com/guide/topics/ui/controls/spinner.html
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-
-            public void onItemSelected(AdapterView<?> parent, View view,
-                                       int position, long id) {
-               selectedSort=position;
-               sorting();
-            }
-
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Another interface callback
-            }
-        });
-
-
         MenuItem searchBarItem = menu.findItem(R.id.app_bar_search);
         searchBar = (SearchView) MenuItemCompat.getActionView(searchBarItem);
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -382,6 +362,19 @@ public class FindEvents extends AppCompatActivity {
             }
         });
         
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.settings:
+                eventslv.setVisibility(View.GONE);
+                settingsView.setVisibility(View.VISIBLE);
+                searchBar.setVisibility(View.GONE);
+                startThemeListener();
+                return true;
+        }
         return true;
     }
 
