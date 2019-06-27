@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -20,14 +21,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -38,18 +36,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.osleventsandroid.R;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.squareup.picasso.Picasso;
+import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Calendar;
+import java.util.Date;
 
 public class FindEvents extends AppCompatActivity {
 
@@ -59,8 +58,7 @@ public class FindEvents extends AppCompatActivity {
     private RelativeLayout settingsView;
     private BottomNavigationView navigation;
     private ArrayList<Event> events;
-    private ArrayList<Event> displayedEvents;
-    private CustomLVAdapter customLVAdapter;
+    private ArrayList<Event> searchFilteredEvents = new ArrayList<>();
     private DatabaseReference database;
     private RelativeLayout progressBar;
     private MenuItem item;
@@ -70,7 +68,6 @@ public class FindEvents extends AppCompatActivity {
     private RelativeLayout relative_layout;
     private RelativeLayout relLayout;
     private RadioGroup radioGroup;
-    private int selectedSort;
 
     private RecyclerView eventsView;
     private StaggeredGridLayoutManager gridLayoutManager;
@@ -99,16 +96,10 @@ public class FindEvents extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_events);
-        //progressBar=(RelativeLayout) findViewById(R.id.progressLayout);
-        //progressBar.setVisibility(View.GONE);
+        progressBar=(RelativeLayout) findViewById(R.id.progressLayout);
+        progressBar.setVisibility(View.VISIBLE);
         database=FirebaseDatabase.getInstance().getReference();
-        //eventslv=(ListView) findViewById(R.id.listViewEvents);
         settingsView=(RelativeLayout) findViewById(R.id.settingsView);
-        /*events=new ArrayList<Event>();
-        selectedSort=0;
-        displayedEvents=new ArrayList<Event>();
-        customLVAdapter=new CustomLVAdapter(FindEvents.this, displayedEvents);
-        databaseListener();*/
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         BottomNavigationView navigation = findViewById(R.id.navigation);
@@ -130,80 +121,29 @@ public class FindEvents extends AppCompatActivity {
 
     private void createAdapter() {
         Query query = database.child("/current-events").orderByChild("startDate");
-        FirebaseRecyclerOptions<Event> options = new FirebaseRecyclerOptions.Builder<Event>()
-                .setQuery(query, Event.class)
-                .build();
-        //Say Hello to our new FirebaseUI android Element, i.e., FirebaseRecyclerAdapter
-        FirebaseRecyclerAdapter<Event, FindEvents.EventViewHolder> adapter = new FirebaseRecyclerAdapter<Event, FindEvents.EventViewHolder>(options){
-
-
-            @NonNull
+        // TODO: easy way out, just listen ONCE and not update in real time
+        //  (harder way: listen for child changes, and make incremental changes to
+        //    update the adapter appropriately...)
+        query.addValueEventListener(new ValueEventListener() {
             @Override
-            public EventViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-                View view = LayoutInflater.from(viewGroup.getContext())
-                        .inflate(R.layout.custom_listview_event_layout, viewGroup, false);
-
-                return new FindEvents.EventViewHolder(view);
-            }
-
-            @Override
-            protected void onBindViewHolder(@NonNull final EventViewHolder viewHolder, int position, @NonNull final Event event) {
-                viewHolder.txtTitle.setText(event.getName());
-                viewHolder.txtLocation.setText(event.getLocation());
-                viewHolder.txtDate.setText(event.getStartDate());
-                viewHolder.txtDuration.setText(event.getStartTimeText() + "-" + event.getEndTimeText());
-                viewHolder.txtOrganization.setText(event.getOrganization());
-                if (viewHolder.imgURL == null) {
-                    StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("Images").child(event.getImgid()+".jpg");
-                    storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            viewHolder.imgURL = uri.toString();
-                            Picasso.with(FindEvents.this).load(uri.toString()).into(viewHolder.img);
-                            Log.d("FindEvents", "Loading Image for: " + viewHolder.txtTitle.getText() + "\nURI: " + uri.toString());
-                        }
-                    });
-                } else {
-                    Picasso.with(FindEvents.this).load(viewHolder.imgURL).into(viewHolder.img);
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                events = new ArrayList<>();
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    events.add(child.getValue(Event.class));
                 }
-                viewHolder.relLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(FindEvents.this, SingleEventPage.class);
-                        intent.putExtra("chosenEvent", event);
-                        startActivity(intent);
-                    }
-                });
+                progressBar.setVisibility(View.GONE);
+                eventsView.setAdapter(new EventRecyclerAdapter(events, FindEvents.this));
+                Calendar date = Calendar.getInstance();
+                Log.d("FindEvents", "Calendar Date: " + date.get(Calendar.DAY_OF_WEEK));
             }
-        };
 
-        Log.d("FindEvents", "Adapter Created");
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-        adapter.startListening();
-        eventsView.setAdapter(adapter);    }
-
-    private static class EventViewHolder extends RecyclerView.ViewHolder {
-
-        TextView txtTitle;
-        TextView txtLocation;
-        TextView txtDate;
-        TextView txtDuration;
-        TextView txtOrganization;
-        ImageView img;
-        String imgURL;
-        RelativeLayout relLayout;
-
-        public EventViewHolder(View v) {
-            super(v);
-            this.txtTitle = (TextView) v.findViewById(R.id.txtTitle);
-            this.txtLocation = (TextView) v.findViewById(R.id.txtLocation);
-            this.txtDate = (TextView) v.findViewById(R.id.txtDate);
-            this.txtDuration = (TextView) v.findViewById(R.id.txtDuration);
-            this.txtOrganization = (TextView) v.findViewById(R.id.txtOrganization);
-            this.img = (ImageView) v.findViewById(R.id.eventImg);
-            this.relLayout = (RelativeLayout) v.findViewById(R.id.relLayout);
-        }
+            }
+        });
     }
+
 
     public void moveToSearch() {
         settingsView.setVisibility(View.GONE);
@@ -315,15 +255,15 @@ public class FindEvents extends AppCompatActivity {
                             event.setImgBytes(bytes);
                             events.add(event);
                             Collections.sort(events, new DateSorter());
-                            displayedEvents.clear();
-                            displayedEvents.addAll(events);
-                            customLVAdapter=new CustomLVAdapter(FindEvents.this, displayedEvents);
+                            searchFilteredEvents.clear();
+                            searchFilteredEvents.addAll(events);
+                            customLVAdapter=new CustomLVAdapter(FindEvents.this, searchFilteredEvents);
                             eventslv.setAdapter(customLVAdapter);
                             progressBar.setVisibility(View.GONE);
                             eventslv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                 @Override
                                 public void onItemClick(AdapterView adapter, View v, int position, long arg3) {
-                                    Event chosenEvent = displayedEvents.get(position);
+                                    Event chosenEvent = searchFilteredEvents.get(position);
                                     Intent intent = new Intent(FindEvents.this, SingleEventPage.class);
                                     byte[] img=chosenEvent.getImgBytes();
                                     while(img.length>(1000*1000)){
@@ -394,37 +334,12 @@ public class FindEvents extends AppCompatActivity {
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-               displayedEvents.clear();
-                for(int i = 0; i< events.size();i++){
-                    Event currentEvent = events.get(i);
-                    String lowerCaseQuery = query.toLowerCase();
-                    if(currentEvent.getName().toLowerCase().contains(lowerCaseQuery) ||
-                            currentEvent.getLocation().toLowerCase().contains(lowerCaseQuery) ||
-                            currentEvent.getTags().toLowerCase().contains(lowerCaseQuery) ||
-                            currentEvent.getOrganization().toLowerCase().contains(lowerCaseQuery)) {
-                        displayedEvents.add(events.get(i));
-                    }
-                }
-                sorting();
+                filterDisplayedEvents(query);
                 return false;
             }
             @Override
             public boolean onQueryTextChange(String query) {
-
-               displayedEvents.clear();
-                for(int i = 0; i< events.size();i++){
-                    Event currentEvent = events.get(i);
-                    String lowerCaseQuery = query.toLowerCase();
-                    if(currentEvent.getName().toLowerCase().contains(lowerCaseQuery) ||
-                            currentEvent.getLocation().toLowerCase().contains(lowerCaseQuery) ||
-                            currentEvent.getTags().toLowerCase().contains(lowerCaseQuery) ||
-                            currentEvent.getOrganization().toLowerCase().contains(lowerCaseQuery)) {
-                        displayedEvents.add(events.get(i));
-                    }
-                }
-                System.out.println("\n\n/n/n/n/n/n/");
-                System.out.println(displayedEvents);
-                sorting();
+                filterDisplayedEvents(query);
                 return false;
             }
         });
@@ -433,15 +348,38 @@ public class FindEvents extends AppCompatActivity {
         searchBar.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                displayedEvents.clear();
-                displayedEvents.addAll(events);
-                sorting();
+                searchFilteredEvents.clear();
+                searchFilteredEvents.addAll(events);
+                updateDisplayingEvents();
                 return false;
             }
         });
         
         return true;
     }
+
+    public void filterDisplayedEvents(String query) {
+        Log.d("FILTER", "events: " + events);
+        searchFilteredEvents.clear();
+        if (query.length() >= 3) {
+            for (int i = 0; i < events.size(); i++) {
+                Event currentEvent = events.get(i);
+                String lowerCaseQuery = query.toLowerCase();
+                if (currentEvent.getName().toLowerCase().contains(lowerCaseQuery) ||
+                        currentEvent.getLocation().toLowerCase().contains(lowerCaseQuery) ||
+                        currentEvent.getTags().toLowerCase().contains(lowerCaseQuery) ||
+                        currentEvent.getOrganization().toLowerCase().contains(lowerCaseQuery)) {
+                    searchFilteredEvents.add(events.get(i));
+                }
+            }
+        }
+        updateDisplayingEvents();
+    }
+    public void updateDisplayingEvents() {
+        Log.d("UPDATE_DISPLAY", "displayed events: " + searchFilteredEvents);
+        eventsView.setAdapter(new EventRecyclerAdapter(searchFilteredEvents,FindEvents.this));
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -517,45 +455,5 @@ public class FindEvents extends AppCompatActivity {
         });
     }
 
-    public void sorting() {
-        if (selectedSort == 1) {
-            Collections.sort(displayedEvents);
-            customLVAdapter = new CustomLVAdapter(FindEvents.this, displayedEvents);
-            eventslv.setAdapter(customLVAdapter);
-        } else if (selectedSort == 2) {
-            Collections.sort(displayedEvents, Collections.<Event>reverseOrder());
-            customLVAdapter = new CustomLVAdapter(FindEvents.this, displayedEvents);
-            eventslv.setAdapter(customLVAdapter);
-        } else if (selectedSort == 0) {
-            Collections.sort(displayedEvents, new DateSorter());
-            customLVAdapter = new CustomLVAdapter(FindEvents.this, displayedEvents);
-            eventslv.setAdapter(customLVAdapter);
-        } else if (selectedSort == 3) {
-            Collections.sort(displayedEvents, new GroupSorter());
-            customLVAdapter = new CustomLVAdapter(FindEvents.this, displayedEvents);
-            eventslv.setAdapter(customLVAdapter);
-        }
-    }
 
-    public static class EventsViewHolder extends RecyclerView.ViewHolder {
-
-        TextView txtTitle;
-        TextView txtLocation;
-        TextView txtDate;
-        TextView txtDuration;
-        TextView txtOrganization;
-        ImageView img;
-        RelativeLayout relLayout;
-
-        public EventsViewHolder(View v) {
-            super(v);
-            this.txtTitle = (TextView) v.findViewById(R.id.txtTitle);
-            this.txtLocation = (TextView) v.findViewById(R.id.txtLocation);
-            this.txtDate = (TextView) v.findViewById(R.id.txtDate);
-            this.txtDuration = (TextView) v.findViewById(R.id.txtDuration);
-            this.txtOrganization = (TextView) v.findViewById(R.id.txtOrganization);
-            this.img = (ImageView) v.findViewById(R.id.eventImg);
-            this.relLayout = (RelativeLayout) v.findViewById(R.id.relLayout);
-        }
-    }
 }

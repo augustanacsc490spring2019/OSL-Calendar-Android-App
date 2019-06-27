@@ -113,7 +113,7 @@ public class Event implements Serializable, Comparable<Event> {
         int hour = Integer.parseInt(startDate.substring(11, 13));
         int min = Integer.parseInt(startDate.substring(14, 16));
         Calendar startTime = Calendar.getInstance();
-        startTime.set(year, month, day, hour, min);
+        startTime.set(year, month-1, day, hour, min);
         return startTime;
 
     }
