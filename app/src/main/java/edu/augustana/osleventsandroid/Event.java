@@ -107,7 +107,7 @@ public class Event implements Serializable, Comparable<Event> {
      * @return Calander object of date
      */
     public Calendar getCalStart() {
-        int year = Integer.parseInt(startDate.substring(0, 4)) - 1;
+        int year = Integer.parseInt(startDate.substring(0, 4));
         int month = Integer.parseInt(startDate.substring(5, 7));
         int day = Integer.parseInt(startDate.substring(8, 10));
         int hour = Integer.parseInt(startDate.substring(11, 13));
@@ -117,20 +117,16 @@ public class Event implements Serializable, Comparable<Event> {
         return startTime;
 
     }
-}
 
-/**
- * Classes for sorting events by location, date and group
- */
+    /**
+     * Classes for sorting events by location, date and group
+     */
 
-class DateSorter implements Comparator<Event> {
-    public int compare(Event o1, Event o2) {
-        return o1.getCalStart().compareTo(o2.getCalStart());
+    public static class DateSorter implements Comparator<Event> {
+        public int compare(Event o1, Event o2) {
+            return o1.getCalStart().compareTo(o2.getCalStart());
+        }
     }
 }
 
-class GroupSorter implements Comparator<Event> {
-    public int compare(Event o1, Event o2) {
-        return o1.getOrganization().toLowerCase().compareTo(o2.getOrganization().toLowerCase());
-    }
-}
+
