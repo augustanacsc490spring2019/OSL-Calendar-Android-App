@@ -9,8 +9,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -26,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -36,7 +35,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.osleventsandroid.R;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -44,8 +42,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -58,7 +54,8 @@ public class FindEvents extends AppCompatActivity {
     private RelativeLayout settingsView;
     private BottomNavigationView navigation;
     private ArrayList<Event> events;
-    private ArrayList<Event> searchFilteredEvents = new ArrayList<>();
+    private ArrayList<Event> filteredEvents = new ArrayList<>();
+    private ArrayList<Event> dateFilteredEvents = new ArrayList<>();
     private DatabaseReference database;
     private RelativeLayout progressBar;
     private MenuItem item;
@@ -68,6 +65,15 @@ public class FindEvents extends AppCompatActivity {
     private RelativeLayout relative_layout;
     private RelativeLayout relLayout;
     private RadioGroup radioGroup;
+    private LinearLayout dateToolbar;
+    private WeeklyDateFilter dateFilter;
+    private TextView currentWeek;
+    private Button prevWeek;
+    private Button nextWeek;
+    private Calendar todayDate;
+    private Calendar weekStartDate;
+    private Calendar weekEndDate;
+
 
     private RecyclerView eventsView;
     private StaggeredGridLayoutManager gridLayoutManager;
@@ -97,6 +103,7 @@ public class FindEvents extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_events);
         progressBar=(RelativeLayout) findViewById(R.id.progressLayout);
+        dateToolbar=(LinearLayout) findViewById(R.id.date_toolbar);
         progressBar.setVisibility(View.VISIBLE);
         database=FirebaseDatabase.getInstance().getReference();
         settingsView=(RelativeLayout) findViewById(R.id.settingsView);
@@ -113,6 +120,42 @@ public class FindEvents extends AppCompatActivity {
         LinearLayoutManager linearManager = new LinearLayoutManager(FindEvents.this, LinearLayoutManager.VERTICAL, false);
         eventsView.setLayoutManager(gridLayoutManager);
         eventsView.setLayoutManager(linearManager);
+        currentWeek = (TextView) findViewById(R.id.current_week);
+        prevWeek = (Button) findViewById(R.id.previous_week);
+        nextWeek = (Button) findViewById(R.id.next_week);
+        weekStartDate = Calendar.getInstance();
+        todayDate = Calendar.getInstance();
+        weekStartDate.set(Calendar.HOUR, 0);
+        weekStartDate.set(Calendar.MINUTE, 0);
+        weekStartDate.set(Calendar.SECOND, 0);
+        todayDate.set(Calendar.HOUR, 0);
+        todayDate.set(Calendar.MINUTE, 0);
+        todayDate.set(Calendar.SECOND, 0);
+        dateFilter = new WeeklyDateFilter(weekStartDate);
+        weekEndDate = dateFilter.getWeekEndDay();
+        prevWeek.setVisibility(View.GONE);
+
+        nextWeek.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                weekStartDate.set(Calendar.DATE, weekEndDate.get(Calendar.DATE));
+                weekStartDate.set(Calendar.MONTH, weekEndDate.get(Calendar.MONTH));
+                weekStartDate.set(Calendar.YEAR, weekEndDate.get(Calendar.YEAR));
+                weekStartDate.add(Calendar.DATE, 1);
+                dateFilter.setWeekStartDay(weekStartDate);
+                weekEndDate = dateFilter.getWeekEndDay();
+                dateFilter.setCurrentWeek(currentWeek, weekEndDate);
+                prevWeek.setVisibility(View.VISIBLE);
+                filterByDate();
+            }
+        });
+
+        prevWeek.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         createAdapter();
 
@@ -132,9 +175,7 @@ public class FindEvents extends AppCompatActivity {
                     events.add(child.getValue(Event.class));
                 }
                 progressBar.setVisibility(View.GONE);
-                eventsView.setAdapter(new EventRecyclerAdapter(events, FindEvents.this));
-                Calendar date = Calendar.getInstance();
-                Log.d("FindEvents", "Calendar Date: " + date.get(Calendar.DAY_OF_WEEK));
+                filterByDate();
             }
 
             @Override
@@ -144,12 +185,24 @@ public class FindEvents extends AppCompatActivity {
         });
     }
 
+    private void filterByDate() {
+        dateFilteredEvents.clear();
+        for (int i = 0; i < events.size(); i++) {
+            if (dateFilter.applyFilter(events.get(i))) {
+                dateFilteredEvents.add(events.get(i));
+            }
+        }
+        dateFilter.setCurrentWeek(currentWeek, weekEndDate);
+        eventsView.setAdapter(new EventRecyclerAdapter(dateFilteredEvents, FindEvents.this));
+    }
+
 
     public void moveToSearch() {
         settingsView.setVisibility(View.GONE);
         //eventslv.setVisibility(View.VISIBLE);
         //searchBar.setVisibility(View.VISIBLE);
         eventsView.setVisibility(View.VISIBLE);
+        dateToolbar.setVisibility(View.VISIBLE);
     }
 
     // Source: https://stackoverflow.com/questions/42275906/how-to-ask-runtime-permissions-for-camera
@@ -166,6 +219,7 @@ public class FindEvents extends AppCompatActivity {
         settingsView.setVisibility(View.VISIBLE);
         searchBar.setVisibility(View.GONE);
         eventsView.setVisibility(View.GONE);
+        dateToolbar.setVisibility(View.GONE);
         startThemeListener();
     }
 
@@ -239,87 +293,6 @@ public class FindEvents extends AppCompatActivity {
 
     }
 
-    /*public void databaseListener(){
-        database.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                events.clear();
-                for(DataSnapshot snapshot: dataSnapshot.getChildren()){
-                    final Event event = snapshot.getValue(Event.class);
-
-                    StorageReference storage = FirebaseStorage.getInstance().getReference().child("Images").child(event.getImgid()+".jpg");
-                    final long ONE_MEGABYTE = Integer.MAX_VALUE;
-                    storage.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                        @Override
-                        public void onSuccess(byte[] bytes) {
-                            event.setImgBytes(bytes);
-                            events.add(event);
-                            Collections.sort(events, new DateSorter());
-                            searchFilteredEvents.clear();
-                            searchFilteredEvents.addAll(events);
-                            customLVAdapter=new CustomLVAdapter(FindEvents.this, searchFilteredEvents);
-                            eventslv.setAdapter(customLVAdapter);
-                            progressBar.setVisibility(View.GONE);
-                            eventslv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                @Override
-                                public void onItemClick(AdapterView adapter, View v, int position, long arg3) {
-                                    Event chosenEvent = searchFilteredEvents.get(position);
-                                    Intent intent = new Intent(FindEvents.this, SingleEventPage.class);
-                                    byte[] img=chosenEvent.getImgBytes();
-                                    while(img.length>(1000*1000)){
-
-                                        // PNG has not losses, it just ignores this field when compressing
-                                        final int COMPRESS_QUALITY = 0;
-
-                                        // Get the bitmap from byte array since, the bitmap has the the resize function
-                                        Bitmap bitmapImage = (BitmapFactory.decodeByteArray(img, 0, img.length));
-
-
-                                        // New bitmap with the correct size, may not return a null object
-                                        Bitmap mutableBitmapImage = Bitmap.createScaledBitmap(bitmapImage,bitmapImage.getWidth()/2, bitmapImage.getHeight()/2, false);
-
-                                        // Get the byte array from tbe bitmap to be returned
-                                        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                                        mutableBitmapImage.compress(Bitmap.CompressFormat.PNG, 0 , outputStream);
-
-                                        if (mutableBitmapImage != bitmapImage) {
-                                            mutableBitmapImage.recycle();
-                                        } // else they are the same, just recycle once
-
-                                        bitmapImage.recycle();
-                                        chosenEvent.setImgBytes(outputStream.toByteArray());
-                                        img=chosenEvent.getImgBytes();
-                                        System.out.println(img.length);
-                                    }
-                                        intent.putExtra("choosenEvent", chosenEvent);
-                                        startActivity(intent);
-
-
-                                }
-                            });
-
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            // Handle any errors
-                        }
-                    });
-
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-
-    }*/
-
     /**
      * Adds a drop down for sorting in the top right action bar
      * @param menu
@@ -334,12 +307,14 @@ public class FindEvents extends AppCompatActivity {
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                filterDisplayedEvents(query);
                 return false;
             }
             @Override
             public boolean onQueryTextChange(String query) {
-                filterDisplayedEvents(query);
+                if (query.length() >= 3) {
+                    SearchMultiFieldFilter filter = new SearchMultiFieldFilter(query);
+                    filterDisplayedEvents(filter);
+                }
                 return false;
             }
         });
@@ -348,9 +323,7 @@ public class FindEvents extends AppCompatActivity {
         searchBar.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                searchFilteredEvents.clear();
-                searchFilteredEvents.addAll(events);
-                updateDisplayingEvents();
+                eventsView.setAdapter(new EventRecyclerAdapter(dateFilteredEvents,FindEvents.this));
                 return false;
             }
         });
@@ -358,26 +331,21 @@ public class FindEvents extends AppCompatActivity {
         return true;
     }
 
-    public void filterDisplayedEvents(String query) {
+    public void filterDisplayedEvents(EventFilter filter) {
         Log.d("FILTER", "events: " + events);
-        searchFilteredEvents.clear();
-        if (query.length() >= 3) {
+        filteredEvents.clear();
             for (int i = 0; i < events.size(); i++) {
                 Event currentEvent = events.get(i);
-                String lowerCaseQuery = query.toLowerCase();
-                if (currentEvent.getName().toLowerCase().contains(lowerCaseQuery) ||
-                        currentEvent.getLocation().toLowerCase().contains(lowerCaseQuery) ||
-                        currentEvent.getTags().toLowerCase().contains(lowerCaseQuery) ||
-                        currentEvent.getOrganization().toLowerCase().contains(lowerCaseQuery)) {
-                    searchFilteredEvents.add(events.get(i));
+
+                if (filter.applyFilter(currentEvent)) {
+                    filteredEvents.add(currentEvent);
                 }
-            }
         }
         updateDisplayingEvents();
     }
     public void updateDisplayingEvents() {
-        Log.d("UPDATE_DISPLAY", "displayed events: " + searchFilteredEvents);
-        eventsView.setAdapter(new EventRecyclerAdapter(searchFilteredEvents,FindEvents.this));
+        Log.d("UPDATE_DISPLAY", "displayed events: " + filteredEvents);
+        eventsView.setAdapter(new EventRecyclerAdapter(filteredEvents,FindEvents.this));
     }
 
 
@@ -389,6 +357,7 @@ public class FindEvents extends AppCompatActivity {
                 settingsView.setVisibility(View.VISIBLE);
                 //searchBar.setVisibility(View.GONE);
                 eventsView.setVisibility(View.GONE);
+                dateToolbar.setVisibility(View.GONE);
                 startThemeListener();
                 return true;
         }
@@ -424,7 +393,7 @@ public class FindEvents extends AppCompatActivity {
                }else if(checkedRadioButton.getId() == radioGroup.findViewById(R.id.theme5).getId()){
                    Theme.augieTheme();
                }
-               ConstraintLayout constraintLayout = findViewById(R.id.container);
+               FrameLayout constraintLayout = findViewById(R.id.container);
                TextView themeTitle = findViewById(R.id.themeTitle);
                themeTitle.setTextColor(Theme.getTextColor());
                 TextView settingsTitle = findViewById(R.id.settingsTitle);
