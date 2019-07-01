@@ -153,7 +153,20 @@ public class FindEvents extends AppCompatActivity {
         prevWeek.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                weekStartDate.add(Calendar.DATE, -7);
+                if (weekStartDate.compareTo(todayDate) < 0) {
+                    weekStartDate.set(Calendar.DATE, todayDate.get(Calendar.DATE));
+                    weekStartDate.set(Calendar.MONTH, todayDate.get(Calendar.MONTH));
+                    weekStartDate.set(Calendar.YEAR, todayDate.get(Calendar.YEAR));
+                    Log.d("DateFilter", "First Week");
+                }
+                if (weekStartDate.compareTo(todayDate) == 0) {
+                    prevWeek.setVisibility(View.GONE);
+                }
+                dateFilter.setWeekStartDay(weekStartDate);
+                weekEndDate = dateFilter.getWeekEndDay();
+                dateFilter.setCurrentWeek(currentWeek, weekEndDate);
+                filterByDate();
             }
         });
 
