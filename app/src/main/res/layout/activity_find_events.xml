@@ -180,6 +180,7 @@
         android:background="?android:attr/windowBackground"
         app:elevation="8dp"
         app:itemHorizontalTranslationEnabled="true"
+        app:labelVisibilityMode="labeled"
         app:menu="@menu/navigation" />
 
 

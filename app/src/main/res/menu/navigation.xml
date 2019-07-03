@@ -2,9 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_search"
-        android:icon="@drawable/search"
-        android:title="@string/title_search" />
+        android:id="@+id/navigation_all_events"
+        android:icon="@drawable/all_events"
+        android:title="@string/title_all_events" />
+
+    <item
+        android:id="@+id/navigation_my_events"
+        android:icon="@drawable/my_events"
+        android:title="@string/title_my_events" />
 
     <item
         android:id="@+id/navigation_scanQR"
@@ -12,8 +17,8 @@
         android:title="@string/title_scan" />
 
     <item
-        android:id="@+id/navigation_settings"
-        android:icon="@drawable/settings"
-        android:title="@string/title_settings" />
+        android:id="@+id/navigation_my_id"
+        android:icon="@drawable/my_id"
+        android:title="@string/title_my_id" />
 
 </menu>

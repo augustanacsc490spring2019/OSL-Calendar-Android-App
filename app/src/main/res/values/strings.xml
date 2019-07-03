@@ -2,7 +2,9 @@
     <string name="app_name">OSL Events Android</string>
     <string name="title_activity_find_events">Campus Events</string>
     <string name="single_event">Campus Event</string>
-    <string name="title_search">Search</string>
+    <string name="title_all_events">All Events</string>
+    <string name="title_my_events">My Events</string>
     <string name="title_scan">Scan QR</string>
+    <string name="title_my_id">My ID</string>
     <string name="title_settings">Settings</string>
 </resources>

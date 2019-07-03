@@ -44,7 +44,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 public class FindEvents extends AppCompatActivity {
 
@@ -67,9 +66,9 @@ public class FindEvents extends AppCompatActivity {
     private RadioGroup radioGroup;
     private LinearLayout dateToolbar;
     private WeeklyDateFilter dateFilter;
-    private TextView currentWeek;
-    private Button prevWeek;
-    private Button nextWeek;
+    private TextView currentWeekLabel;
+    private Button prevWeekBtn;
+    private Button nextWeekBtn;
     private Calendar todayDate;
     private Calendar weekStartDate;
     private Calendar weekEndDate;
@@ -84,14 +83,11 @@ public class FindEvents extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.navigation_search:
+                case R.id.navigation_all_events:
                     moveToSearch();
                     return true;
                 case R.id.navigation_scanQR:
                     moveToQR();
-                    return true;
-                case R.id.navigation_settings:
-                    moveToSettings();
                     return true;
             }
             return false;
@@ -120,52 +116,26 @@ public class FindEvents extends AppCompatActivity {
         LinearLayoutManager linearManager = new LinearLayoutManager(FindEvents.this, LinearLayoutManager.VERTICAL, false);
         eventsView.setLayoutManager(gridLayoutManager);
         eventsView.setLayoutManager(linearManager);
-        currentWeek = (TextView) findViewById(R.id.current_week);
-        prevWeek = (Button) findViewById(R.id.previous_week);
-        nextWeek = (Button) findViewById(R.id.next_week);
-        weekStartDate = Calendar.getInstance();
-        todayDate = Calendar.getInstance();
-        weekStartDate.set(Calendar.HOUR, 0);
-        weekStartDate.set(Calendar.MINUTE, 0);
-        weekStartDate.set(Calendar.SECOND, 0);
-        todayDate.set(Calendar.HOUR, 0);
-        todayDate.set(Calendar.MINUTE, 0);
-        todayDate.set(Calendar.SECOND, 0);
-        dateFilter = new WeeklyDateFilter(weekStartDate);
-        weekEndDate = dateFilter.getWeekEndDay();
-        prevWeek.setVisibility(View.GONE);
+        currentWeekLabel = (TextView) findViewById(R.id.current_week);
+        prevWeekBtn = (Button) findViewById(R.id.previous_week);
+        nextWeekBtn = (Button) findViewById(R.id.next_week);
 
-        nextWeek.setOnClickListener(new View.OnClickListener() {
+        todayDate = Calendar.getInstance();
+        dateFilter = new WeeklyDateFilter(todayDate);
+        prevWeekBtn.setEnabled(false);
+
+        nextWeekBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                weekStartDate.set(Calendar.DATE, weekEndDate.get(Calendar.DATE));
-                weekStartDate.set(Calendar.MONTH, weekEndDate.get(Calendar.MONTH));
-                weekStartDate.set(Calendar.YEAR, weekEndDate.get(Calendar.YEAR));
-                weekStartDate.add(Calendar.DATE, 1);
-                dateFilter.setWeekStartDay(weekStartDate);
-                weekEndDate = dateFilter.getWeekEndDay();
-                dateFilter.setCurrentWeek(currentWeek, weekEndDate);
-                prevWeek.setVisibility(View.VISIBLE);
+                dateFilter.moveToNextWeek();
                 filterByDate();
             }
         });
 
-        prevWeek.setOnClickListener(new View.OnClickListener() {
+        prevWeekBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                weekStartDate.add(Calendar.DATE, -7);
-                if (weekStartDate.compareTo(todayDate) < 0) {
-                    weekStartDate.set(Calendar.DATE, todayDate.get(Calendar.DATE));
-                    weekStartDate.set(Calendar.MONTH, todayDate.get(Calendar.MONTH));
-                    weekStartDate.set(Calendar.YEAR, todayDate.get(Calendar.YEAR));
-                    Log.d("DateFilter", "First Week");
-                }
-                if (weekStartDate.compareTo(todayDate) == 0) {
-                    prevWeek.setVisibility(View.GONE);
-                }
-                dateFilter.setWeekStartDay(weekStartDate);
-                weekEndDate = dateFilter.getWeekEndDay();
-                dateFilter.setCurrentWeek(currentWeek, weekEndDate);
+                dateFilter.moveToPreviousWeek();
                 filterByDate();
             }
         });
@@ -205,7 +175,8 @@ public class FindEvents extends AppCompatActivity {
                 dateFilteredEvents.add(events.get(i));
             }
         }
-        dateFilter.setCurrentWeek(currentWeek, weekEndDate);
+        prevWeekBtn.setEnabled(!dateFilter.isFilteringCurrentWeek());
+        currentWeekLabel.setText(dateFilter.getCurrentWeekLabel());
         eventsView.setAdapter(new EventRecyclerAdapter(dateFilteredEvents, FindEvents.this));
     }
 
@@ -241,7 +212,7 @@ public class FindEvents extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == QRCODE) {
-            navigation.setSelectedItemId(R.id.navigation_search);
+            navigation.setSelectedItemId(R.id.navigation_all_events);
             if (resultCode == RESULT_OK) {
                 String code=data.getStringExtra("QR Code");
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(code)));
