@@ -1,11 +1,12 @@
 package edu.augustana.osleventsandroid;
 
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+
 /*
     This class houses all the information for an event. It allows you to get information on a
     particular event, and contains custom compare methods for the events.
@@ -16,6 +17,7 @@ public class Event implements Serializable, Comparable<Event> {
     private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("EEE MMM d, yyyy");
 
 
+    private String eventID;
     private String description;
     private int duration;
     private String imgid; // Note: this field IS assigned when firebase creates the object
@@ -24,20 +26,11 @@ public class Event implements Serializable, Comparable<Event> {
     private String organization;
     private String startDate;
     private String tags;
+    private HashMap<String, Boolean> favoritedBy = new HashMap<>();
 
 
     @SuppressWarnings({"unused"}) // used by Firebase deserialization
     public Event() {
-    }
-
-    public Event(String name, String location, String date, int duration, String group, String tags, String description, byte[] img) throws IOException {
-        this.name = name;
-        this.location = location;
-        this.startDate = date;
-        this.organization = group;
-        this.duration = duration;
-        this.tags = tags;
-        this.description = description;
     }
 
     //Getters and setters
@@ -66,6 +59,12 @@ public class Event implements Serializable, Comparable<Event> {
         return imgid;
     }
 
+    public HashMap<String, Boolean> getFavoritedBy() { return favoritedBy; }
+
+    public String getEventID() { return eventID; }
+
+    public void setEventID(String eventID) { this.eventID = eventID; }
+
     /**
      *
      * @return string format of event start time
@@ -79,7 +78,7 @@ public class Event implements Serializable, Comparable<Event> {
      * @return string format of the event end time
      */
     public String getEndTimeText() {
-        Calendar end=getCalStart();
+        Calendar end= getCalStart();
         end.add(Calendar.MINUTE, duration);
         return TIME_FORMATTER.format(end.getTime());
     }

@@ -1,10 +1,5 @@
 package edu.augustana.osleventsandroid;
 
-import android.util.Log;
-import android.widget.TextView;
-
-import com.example.osleventsandroid.R;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -14,6 +9,7 @@ public class WeeklyDateFilter implements EventFilter {
 
     private Calendar weekStartDay;
     private Calendar weekEndDay;
+    private boolean enabled = true;
 
     public WeeklyDateFilter(Calendar startDay) {
         startDay.set(Calendar.HOUR, 0);
@@ -47,6 +43,9 @@ public class WeeklyDateFilter implements EventFilter {
 
     @Override
     public boolean applyFilter(Event event) {
+        if (!enabled) {
+            return true;
+        }
         return (event.getCalStart().compareTo(weekStartDay) > 0 && event.getCalStart().compareTo(weekEndDay) < 0);
     }
 
@@ -100,4 +99,11 @@ public class WeeklyDateFilter implements EventFilter {
 
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 }

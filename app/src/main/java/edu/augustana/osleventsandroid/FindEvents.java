@@ -26,7 +26,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -35,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.osleventsandroid.R;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -48,13 +48,12 @@ import java.util.Calendar;
 public class FindEvents extends AppCompatActivity {
 
     final int QRCODE = 0;
-    private TextView mTextMessage;
-    private ListView eventslv;
     private RelativeLayout settingsView;
     private BottomNavigationView navigation;
     private ArrayList<Event> events;
     private ArrayList<Event> filteredEvents = new ArrayList<>();
     private ArrayList<Event> dateFilteredEvents = new ArrayList<>();
+    private ArrayList<Event> myEvents = new ArrayList<>();
     private DatabaseReference database;
     private RelativeLayout progressBar;
     private MenuItem item;
@@ -70,8 +69,8 @@ public class FindEvents extends AppCompatActivity {
     private Button prevWeekBtn;
     private Button nextWeekBtn;
     private Calendar todayDate;
-    private Calendar weekStartDate;
-    private Calendar weekEndDate;
+    private MyEventsFilter favoriteEventsFilter;
+    private SearchMultiFieldFilter searchFilter;
 
 
     private RecyclerView eventsView;
@@ -84,10 +83,18 @@ public class FindEvents extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_all_events:
+                    dateFilter.setEnabled(true);
+                    favoriteEventsFilter.setEnabled(false);
                     moveToSearch();
                     return true;
                 case R.id.navigation_scanQR:
                     moveToQR();
+                    return true;
+                case R.id.navigation_my_events:
+                    dateFilter.setEnabled(false);
+                    favoriteEventsFilter.setEnabled(true);
+                    dateToolbar.setVisibility(View.GONE);
+                    filter();
                     return true;
             }
             return false;
@@ -128,7 +135,7 @@ public class FindEvents extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 dateFilter.moveToNextWeek();
-                filterByDate();
+                filter();
             }
         });
 
@@ -136,18 +143,25 @@ public class FindEvents extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 dateFilter.moveToPreviousWeek();
-                filterByDate();
+                filter();
             }
         });
 
-        createAdapter();
+        loadEventsFromFirebase();
+
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        String userEmail = mAuth.getCurrentUser().getEmail();
+        String user = userEmail.substring(0, userEmail.indexOf('@'));
+        favoriteEventsFilter = new MyEventsFilter(user);
+        searchFilter = new SearchMultiFieldFilter("");
 
         Log.d("FindEvents", "OnCreate finished");
     }
 
-    private void createAdapter() {
+    private void loadEventsFromFirebase() {
         Query query = database.child("/current-events").orderByChild("startDate");
-        // TODO: easy way out, just listen ONCE and not update in real time
+        // TODO: easy way out, reset all events whenever any event changes
+        //  (but that can make the user's list refresh unexpectedly?)
         //  (harder way: listen for child changes, and make incremental changes to
         //    update the adapter appropriately...)
         query.addValueEventListener(new ValueEventListener() {
@@ -155,10 +169,12 @@ public class FindEvents extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 events = new ArrayList<>();
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    events.add(child.getValue(Event.class));
+                    Event e = child.getValue(Event.class);
+                    e.setEventID(child.getKey());
+                    events.add(e);
                 }
                 progressBar.setVisibility(View.GONE);
-                filterByDate();
+                filter();
             }
 
             @Override
@@ -166,6 +182,19 @@ public class FindEvents extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void filter() {
+        filteredEvents.clear();
+        for (int i = 0; i < events.size(); i++) {
+            Event event = events.get(i);
+            if (dateFilter.applyFilter(event) && favoriteEventsFilter.applyFilter(event) && searchFilter.applyFilter(event)) {
+                filteredEvents.add(event);
+            }
+        }
+        prevWeekBtn.setEnabled(!dateFilter.isFilteringCurrentWeek());
+        currentWeekLabel.setText(dateFilter.getCurrentWeekLabel());
+        eventsView.setAdapter(new EventRecyclerAdapter(filteredEvents, FindEvents.this));
     }
 
     private void filterByDate() {
@@ -180,6 +209,17 @@ public class FindEvents extends AppCompatActivity {
         eventsView.setAdapter(new EventRecyclerAdapter(dateFilteredEvents, FindEvents.this));
     }
 
+    private void filterMyEvents() {
+        myEvents.clear();
+        for (int i = 0; i < events.size(); i++) {
+            if (favoriteEventsFilter.applyFilter(events.get(i))) {
+                myEvents.add(events.get(i));
+            }
+        }
+        eventsView.setAdapter(new EventRecyclerAdapter(myEvents, FindEvents.this));
+        dateToolbar.setVisibility(View.GONE);
+    }
+
 
     public void moveToSearch() {
         settingsView.setVisibility(View.GONE);
@@ -187,6 +227,7 @@ public class FindEvents extends AppCompatActivity {
         //searchBar.setVisibility(View.VISIBLE);
         eventsView.setVisibility(View.VISIBLE);
         dateToolbar.setVisibility(View.VISIBLE);
+        filter();
     }
 
     // Source: https://stackoverflow.com/questions/42275906/how-to-ask-runtime-permissions-for-camera
@@ -296,8 +337,11 @@ public class FindEvents extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String query) {
                 if (query.length() >= 3) {
-                    SearchMultiFieldFilter filter = new SearchMultiFieldFilter(query);
-                    filterDisplayedEvents(filter);
+                    searchFilter = new SearchMultiFieldFilter(query);
+                    searchFilter.setEnabled(true);
+                    dateFilter.setEnabled(false);
+                    dateToolbar.setVisibility(View.GONE);
+                    filter();
                 }
                 return false;
             }
@@ -307,7 +351,12 @@ public class FindEvents extends AppCompatActivity {
         searchBar.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                eventsView.setAdapter(new EventRecyclerAdapter(dateFilteredEvents,FindEvents.this));
+                searchFilter.setEnabled(false);
+                if (!favoriteEventsFilter.isEnabled()) {
+                    dateFilter.setEnabled(true);
+                    dateToolbar.setVisibility(View.VISIBLE);
+                }
+                filter();
                 return false;
             }
         });

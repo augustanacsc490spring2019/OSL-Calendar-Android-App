@@ -119,7 +119,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
                     android:layout_toRightOf="@id/lbl_location"
-                    android:text="Locationskjg;lfdjg;dfkjgdfgjdfklg;dfjgdl;fgjd;fgjdfgjdflgjdf;gjd;fgjdfgjjd;jgdjg;djf"
+                    android:autoLink="web"
+                    android:text="Location info"
                     android:textSize="18dp" />
 
                 <TextView
@@ -130,7 +131,7 @@
                     android:layout_alignLeft="@id/txt_location"
                     android:layout_marginRight="10dp"
                     android:layout_toRightOf="@id/lbl_Date"
-                    android:text="Datefgdfgdflgjdfklgjdfg;lkdfgjd;fgjdf;lgkjdf;glkjfdljdfkgjdlj"
+                    android:text="Date"
                     android:textSize="18dp" />
 
                 <TextView
@@ -140,7 +141,7 @@
                     android:layout_below="@id/txt_date"
                     android:layout_alignLeft="@id/txt_location"
                     android:layout_marginRight="10dp"
-                    android:text="Timesdfjsd;fljd;sfljsdf;sjf;sdjf;sdjf;sdjfs;djfs;djfsdfjsdfs;dfjsdf;sjf;sdljfsljkl"
+                    android:text="Time"
                     android:textSize="18dp" />
 
                 <TextView
@@ -150,7 +151,7 @@
                     android:layout_below="@id/txt_time"
                     android:layout_alignLeft="@id/txt_location"
                     android:layout_marginRight="10dp"
-                    android:text="Organizationcvhlxcvhxclkvhxlvhxcvhxvhxcvkxchvlxchvxlkvhxlvhxclvkhxcvlxhcvxlvhxlvhjx"
+                    android:text="Organization"
                     android:textSize="18dp" />
 
                 <TextView
@@ -161,7 +162,7 @@
                     android:layout_alignLeft="@id/txt_location"
                     android:layout_marginRight="10dp"
                     android:layout_marginBottom="5dp"
-                    android:text="Descriptionchvlvhlxckvhjcxlkvhxclvkjxchlvkxchjvlxckjvxclvhxclvhxcvkxcjhvlxcvhxclkvhjxclvhxclvkjhxclkvjhlxckjh"
+                    android:text="Description"
                     android:textSize="18dp" />
             </RelativeLayout>
 
@@ -176,14 +177,25 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp">
 
+                <CheckBox
+                    android:id="@+id/favorite_checkBox"
+                    style="?android:attr/starStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:onClick="favoritesClick"
+                    android:text="Favorite" />
+
                 <Button
                     android:id="@+id/btn_calendar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="10dip"
+                    android:layout_below="@id/favorite_checkBox"
                     android:layout_centerHorizontal="true"
                     android:layout_marginLeft="15dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginRight="15dp"
+                    android:padding="10dip"
                     android:text="Add to Calendar" />
 
             </RelativeLayout>

@@ -6,19 +6,21 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.provider.CalendarContract.Events;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -26,6 +28,12 @@ import android.widget.TextView;
 
 import com.example.osleventsandroid.R;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
@@ -49,6 +57,9 @@ public class SingleEventPage extends AppCompatActivity {
     private TextView txtDescription;
     private ImageView img;
     private TreeMap map;
+    private CheckBox favoriteCheckBox;
+    private DatabaseReference database;
+    private String user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,9 +102,28 @@ public class SingleEventPage extends AppCompatActivity {
         });
 
         makeTheme();
+        favoriteCheckBox = findViewById(R.id.favorite_checkBox);
+        database = FirebaseDatabase.getInstance().getReference("/current-events");
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        String userEmail = mAuth.getCurrentUser().getEmail();
+        user = userEmail.substring(0, userEmail.indexOf('@'));
 
+        boolean favorited = event.getFavoritedBy().containsKey(user);
+        favoriteCheckBox.setChecked(favorited);
     }
 
+    //Click functionality for Favorites Check Box
+    public void favoritesClick(View view) {
+        if (favoriteCheckBox.isChecked()) {
+            //Currently changing this event has no effect since it is just a deserialized copy
+            // of the original event, AND all the events get recreated from Firebase anyway?
+            event.getFavoritedBy().put(user,true);
+            database.child(event.getEventID()).child("favoritedBy").child(user).setValue(true);
+        } else {
+            event.getFavoritedBy().remove(user);
+            database.child(event.getEventID()).child("favoritedBy").child(user).removeValue();
+        }
+    }
 
     //Add the event to the user's google calendar
     public void addToCalendar() {
@@ -155,6 +185,34 @@ public class SingleEventPage extends AppCompatActivity {
                 alertDialog.show();
             }
         }
+    }
+
+    public void addToCalPopUp() {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        String userEmail = mAuth.getCurrentUser().getEmail();
+        final String user = userEmail.substring(0, userEmail.indexOf('@'));
+        final DatabaseReference database= FirebaseDatabase.getInstance().getReference("/user-favorites");
+        database.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                boolean eventExists = false;
+                for (DataSnapshot test : snapshot.getChildren()) {
+                    if (test.equals(event)) {
+                        Log.d("My Events", "Event already exists");
+                        eventExists = true;
+                    }
+                }
+                if (!eventExists) {
+                    database.child(user).setValue(event);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        database.setValue(event);
     }
 
     public void launchAddToCalendarIntent() {
