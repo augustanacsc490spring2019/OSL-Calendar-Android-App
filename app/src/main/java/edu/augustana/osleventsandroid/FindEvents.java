@@ -56,7 +56,6 @@ public class FindEvents extends AppCompatActivity {
     private ArrayList<Event> myEvents = new ArrayList<>();
     private DatabaseReference database;
     private RelativeLayout progressBar;
-    private MenuItem item;
     private SearchView searchBar;
     private RadioButton checkedRadioButton;
     private LinearLayout linear_layout;
@@ -197,30 +196,6 @@ public class FindEvents extends AppCompatActivity {
         eventsView.setAdapter(new EventRecyclerAdapter(filteredEvents, FindEvents.this));
     }
 
-    private void filterByDate() {
-        dateFilteredEvents.clear();
-        for (int i = 0; i < events.size(); i++) {
-            if (dateFilter.applyFilter(events.get(i))) {
-                dateFilteredEvents.add(events.get(i));
-            }
-        }
-        prevWeekBtn.setEnabled(!dateFilter.isFilteringCurrentWeek());
-        currentWeekLabel.setText(dateFilter.getCurrentWeekLabel());
-        eventsView.setAdapter(new EventRecyclerAdapter(dateFilteredEvents, FindEvents.this));
-    }
-
-    private void filterMyEvents() {
-        myEvents.clear();
-        for (int i = 0; i < events.size(); i++) {
-            if (favoriteEventsFilter.applyFilter(events.get(i))) {
-                myEvents.add(events.get(i));
-            }
-        }
-        eventsView.setAdapter(new EventRecyclerAdapter(myEvents, FindEvents.this));
-        dateToolbar.setVisibility(View.GONE);
-    }
-
-
     public void moveToSearch() {
         settingsView.setVisibility(View.GONE);
         //eventslv.setVisibility(View.VISIBLE);
@@ -238,17 +213,6 @@ public class FindEvents extends AppCompatActivity {
             requestPermission();
         }
     }
-
-    public void moveToSettings() {
-        //eventslv.setVisibility(View.GONE);
-        settingsView.setVisibility(View.VISIBLE);
-        searchBar.setVisibility(View.GONE);
-        eventsView.setVisibility(View.GONE);
-        dateToolbar.setVisibility(View.GONE);
-        startThemeListener();
-    }
-
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -363,24 +327,6 @@ public class FindEvents extends AppCompatActivity {
         
         return true;
     }
-
-    public void filterDisplayedEvents(EventFilter filter) {
-        Log.d("FILTER", "events: " + events);
-        filteredEvents.clear();
-            for (int i = 0; i < events.size(); i++) {
-                Event currentEvent = events.get(i);
-
-                if (filter.applyFilter(currentEvent)) {
-                    filteredEvents.add(currentEvent);
-                }
-        }
-        updateDisplayingEvents();
-    }
-    public void updateDisplayingEvents() {
-        Log.d("UPDATE_DISPLAY", "displayed events: " + filteredEvents);
-        eventsView.setAdapter(new EventRecyclerAdapter(filteredEvents,FindEvents.this));
-    }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
