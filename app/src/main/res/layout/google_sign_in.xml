@@ -31,6 +31,12 @@
     <!--app:layout_widthPercent="60%"-->
     <!--app:srcCompat="@drawable/aces_image" />-->
 
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/augiemedal" />
+
     <ProgressBar
         android:id="@+id/ctrlActivityIndicator"
         android:layout_width="wrap_content"
@@ -65,7 +71,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginTop="-2dp"
         android:layout_marginBottom="-2dp"
-        android:text="?"
+        android:text="\?"
         android:textSize="14dp"
         app:layout_heightPercent="7.5%"
         app:layout_marginRightPercent="5%"

@@ -45,10 +45,6 @@
             android:label="QRScanner"
             android:screenOrientation="portrait" />
         <activity
-            android:name="edu.augustana.osleventsandroid.TestFirebaseUIActivity"
-            android:label="Movie">
-        </activity>
-        <activity
             android:name="edu.augustana.osleventsandroid.Settings"
             android:label="Settings">
         </activity>
