@@ -35,6 +35,9 @@
             android:exported="true"
             android:label="OSL Events"
             android:screenOrientation="portrait">
+        </activity>
+        <activity android:name="edu.augustana.osleventsandroid.ForceUpdateActivity"
+            android:label="OSL Events">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
