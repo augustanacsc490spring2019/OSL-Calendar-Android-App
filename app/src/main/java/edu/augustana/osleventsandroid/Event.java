@@ -26,6 +26,7 @@ public class Event implements Serializable, Comparable<Event> {
     private String organization;
     private String startDate;
     private String tags;
+    private String webLink;
     private HashMap<String, Boolean> favoritedBy = new HashMap<>();
 
 
@@ -58,6 +59,8 @@ public class Event implements Serializable, Comparable<Event> {
     public String getImgid() {
         return imgid;
     }
+
+    public String getWebLink() { return webLink; }
 
     public HashMap<String, Boolean> getFavoritedBy() { return favoritedBy; }
 

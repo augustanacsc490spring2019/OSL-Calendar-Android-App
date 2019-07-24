@@ -14,6 +14,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -110,6 +112,17 @@ public class SingleEventPage extends AppCompatActivity {
 
         boolean favorited = event.getFavoritedBy().containsKey(user);
         favoriteCheckBox.setChecked(favorited);
+
+        TextView webLink = (TextView) findViewById(R.id.txt_webLink);
+        if ((event.getWebLink()).equals("")) {
+            TextView linkLabel = (TextView) findViewById(R.id.lbl_webLink);
+            linkLabel.setVisibility(View.GONE);
+            webLink.setVisibility(View.GONE);
+        } else {
+            webLink.setText(Html.fromHtml("<a href=\""+ event.getWebLink() + "\">Click for more details.</a>"));
+            webLink.setClickable(true);
+            webLink.setMovementMethod(LinkMovementMethod.getInstance());
+        }
     }
 
     //Click functionality for Favorites Check Box
