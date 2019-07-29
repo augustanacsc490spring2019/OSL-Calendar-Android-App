@@ -155,10 +155,21 @@
                 </RadioGroup>
 
                 <Button
-                    android:id="@+id/signOutBttn"
+                    android:id="@+id/aboutBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/radioGroup"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="10sp"
+                    android:layout_marginRight="10sp"
+                    android:onClick="aboutBtn"
+                    android:text="About"/>
+
+                <Button
+                    android:id="@+id/signOutBttn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/aboutBtn"
                     android:layout_centerHorizontal="true"
                     android:layout_marginLeft="10sp"
                     android:layout_marginRight="10sp"

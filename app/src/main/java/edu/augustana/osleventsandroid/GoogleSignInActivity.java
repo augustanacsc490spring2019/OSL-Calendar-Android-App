@@ -12,7 +12,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.Gravity;
@@ -105,6 +107,9 @@ public class GoogleSignInActivity extends AppCompatActivity {
         aboutPageButton.setEnabled(true);
         privacyView.setEnabled(true);
         createNotificationChannel();
+        privacyView.setText(Html.fromHtml("<a href=\"https://osl-events-app.firebaseapp.com/privacy_policy.html\">By sigining in, you agree to our Privacy Policy</a>"));
+        privacyView.setClickable(true);
+        privacyView.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     private void displayNoConnectionMsg() {
@@ -151,7 +156,7 @@ public class GoogleSignInActivity extends AppCompatActivity {
         aboutPageButton = (Button) findViewById(R.id.about_btn);
         aboutPageButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //startActivity(new Intent(GoogleSignInActivity.this, AboutPageActivity.class));
+                startActivity(new Intent(GoogleSignInActivity.this, AboutPageActivity.class));
             }
         });
         aboutPageButton.setEnabled(false);

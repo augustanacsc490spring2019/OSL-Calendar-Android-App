@@ -347,6 +347,12 @@ public class FindEvents extends AppCompatActivity {
         finish();
     }
 
+    public void aboutBtn(View v) {
+        Log.d("ABOUT", "Running");
+        Intent intent = new Intent(FindEvents.this, AboutPageActivity.class);
+        startActivityForResult(intent, 4);
+    }
+
     public void startThemeListener(){
         radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
         checkedRadioButton = (RadioButton) radioGroup.findViewById(radioGroup.getCheckedRadioButtonId());

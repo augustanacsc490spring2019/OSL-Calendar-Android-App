@@ -57,7 +57,7 @@
         android:gravity="center"
         android:linksClickable="true"
         android:text="By sigining in, you agree to our Privacy Policy"
-        android:textColor="@color/white"
+        android:textColor="@android:color/black"
         android:textSize="14dp"
         app:layout_heightPercent="5%"
         app:layout_marginBottomPercent="1%" />
@@ -71,6 +71,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginTop="-2dp"
         android:layout_marginBottom="-2dp"
+        android:onClick="aboutBtn"
         android:text="\?"
         android:textSize="14dp"
         app:layout_heightPercent="7.5%"

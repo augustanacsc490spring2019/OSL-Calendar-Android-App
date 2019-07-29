@@ -51,6 +51,10 @@
             android:name="edu.augustana.osleventsandroid.Settings"
             android:label="Settings">
         </activity>
+        <activity
+            android:name="edu.augustana.osleventsandroid.AboutPageActivity"
+            android:label="About">
+        </activity>
     </application>
 
 </manifest>

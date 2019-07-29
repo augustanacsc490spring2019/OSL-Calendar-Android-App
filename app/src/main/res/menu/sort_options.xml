@@ -11,7 +11,7 @@
 
     <item
         android:id="@+id/settings"
-        android:icon="@drawable/settings"
+        android:icon="@drawable/settingswhite"
         android:title="@string/title_settings"
         app:showAsAction="always" />
 
