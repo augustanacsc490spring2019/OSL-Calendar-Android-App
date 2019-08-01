@@ -104,7 +104,7 @@
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
-                <TextView
+                <!--<TextView
                     android:id="@+id/themeTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -152,13 +152,13 @@
                         android:layout_below="@id/theme4"
                         android:text="Augie" />
 
-                </RadioGroup>
+                </RadioGroup>-->
 
                 <Button
                     android:id="@+id/aboutBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/radioGroup"
+                    android:layout_below="@id/settingsTitle"
                     android:layout_centerHorizontal="true"
                     android:layout_marginLeft="10sp"
                     android:layout_marginRight="10sp"

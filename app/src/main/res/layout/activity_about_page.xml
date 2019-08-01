@@ -48,7 +48,7 @@
             <TextView
                 android:id="@+id/support_text"
                 android:layout_width="0dp"
-                android:layout_height="80dp"
+                android:layout_height="60dp"
                 android:layout_marginLeft="80dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="16dp"
@@ -72,33 +72,13 @@
             <TextView
                 android:id="@+id/purpose_text"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
+                android:layout_height="70dp"
                 android:layout_marginLeft="80dp"
                 android:layout_marginRight="80dp"
                 android:layout_marginTop="20dp"
                 android:text="To provide an easy way for students to track and attend events held on campus by different student organizations."
                 app:layout_constraintStart_toStartOf="@+id/support_text"
                 app:layout_constraintTop_toBottomOf="@+id/support_text" />
-
-            <TextView
-                android:id="@+id/hours_title"
-                android:layout_width="65dp"
-                android:layout_height="22dp"
-                android:text="Hours"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/hours_text"
-                app:layout_constraintTop_toTopOf="@+id/hours_text" />
-
-            <TextView
-                android:id="@+id/hours_text"
-                android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:layout_marginLeft="80dp"
-                android:layout_marginRight="80dp"
-                android:layout_marginTop="20dp"
-                android:text="Always Open"
-                app:layout_constraintStart_toStartOf="@+id/purpose_text"
-                app:layout_constraintTop_toBottomOf="@+id/purpose_text" />
 
             <TextView
                 android:id="@+id/phone_title"
@@ -112,13 +92,13 @@
             <TextView
                 android:id="@+id/phone_text"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="30dp"
                 android:layout_marginLeft="80dp"
                 android:layout_marginRight="80dp"
                 android:layout_marginTop="20dp"
                 android:text="309-794-2695"
-                app:layout_constraintStart_toStartOf="@+id/hours_text"
-                app:layout_constraintTop_toBottomOf="@+id/hours_text" />
+                app:layout_constraintStart_toStartOf="@+id/purpose_text"
+                app:layout_constraintTop_toBottomOf="@+id/purpose_text" />
 
             <TextView
                 android:id="@+id/devTeam_title"
@@ -134,9 +114,9 @@
                 android:layout_width="0dp"
                 android:layout_height="140dp"
                 android:layout_marginLeft="80dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginEnd="16dp"
-                android:text="Kyle Workman, Jared Haeme, Brent Pierce, Paige Oucheriah, Michael Wardach\n\n(Made by Augustana students for Augustana students)\n\nAdvised by Dr. Stonedahl"
+                android:text="Kyle Workman, Jared Haeme, Brandon Thompson, Jack Cannell, Brent Pierce, Paige Oucheriah, Michael Wardach\n\n(Made by Augustana students for Augustana students)\n\nAdvised by Dr. Stonedahl"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/phone_text"
                 app:layout_constraintTop_toBottomOf="@id/phone_text"

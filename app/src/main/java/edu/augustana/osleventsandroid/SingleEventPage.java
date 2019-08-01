@@ -56,6 +56,7 @@ public class SingleEventPage extends AppCompatActivity {
     private TextView txtDate;
     private TextView txtTime;
     private TextView txtGroup;
+    private TextView txtTags;
     private TextView txtDescription;
     private ImageView img;
     private TreeMap map;
@@ -74,6 +75,7 @@ public class SingleEventPage extends AppCompatActivity {
         this.txtDate = (TextView) findViewById(R.id.txt_date);
         this.txtTime = (TextView) findViewById(R.id.txt_time);
         this.txtGroup = (TextView) findViewById(R.id.txt_organization);
+        this.txtTags = (TextView) findViewById(R.id.txt_tags);
         this.txtDescription = (TextView) findViewById(R.id.txt_description);
         map = new TreeMap();
 
@@ -84,6 +86,12 @@ public class SingleEventPage extends AppCompatActivity {
         txtDate.setText(event.getStartDate());
         txtTime.setText(event.getStartTimeText() + " - " + event.getEndTimeText());
         txtGroup.setText(event.getOrganization());
+        if (event.getTags() == null) {
+            txtTags.setVisibility(View.GONE);
+            findViewById(R.id.lbl_tags).setVisibility(View.GONE);
+        } else {
+            txtTags.setText(event.getTags());
+        }
         txtDescription.setText(event.getDescription());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -308,6 +316,12 @@ public class SingleEventPage extends AppCompatActivity {
         txt_organization.setTextColor(Theme.getTextColor());
         TextView txt_description = findViewById(R.id.txt_description);
         txt_description.setTextColor(Theme.getTextColor());
+        TextView txt_tags = findViewById(R.id.txt_tags);
+        txt_tags.setTextColor(Theme.getTextColor());
+        TextView lbl_tags = findViewById(R.id.lbl_tags);
+        lbl_tags.setTextColor(Theme.getTextColor());
+        TextView lbl_weblink = findViewById(R.id.lbl_webLink);
+        lbl_weblink.setTextColor(Theme.getTextColor());
         Button btn_calendar = findViewById(R.id.btn_calendar);
         btn_calendar.setBackgroundColor(Theme.getButtonColor());
         btn_calendar.setTextColor(Theme.getTextColor());

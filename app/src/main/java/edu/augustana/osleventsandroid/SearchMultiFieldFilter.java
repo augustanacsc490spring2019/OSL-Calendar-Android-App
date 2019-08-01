@@ -22,10 +22,13 @@ public class SearchMultiFieldFilter implements EventFilter {
         if (!enabled) {
             return true;
         }
-
+        String tags = "";
+        if (event.getTags() != null) {
+            tags = event.getTags();
+        }
         if (event.getName().toLowerCase().contains(lowerCaseQuery) ||
                 event.getLocation().toLowerCase().contains(lowerCaseQuery) ||
-                event.getTags().toLowerCase().contains(lowerCaseQuery) ||
+                tags.toLowerCase().contains(lowerCaseQuery) ||
                 event.getOrganization().toLowerCase().contains(lowerCaseQuery)) {
             return true;
         }

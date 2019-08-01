@@ -103,13 +103,35 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/lbl_tags"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/txt_organization"
+                    android:layout_alignBaseline="@+id/txt_tags"
+                    android:layout_alignLeft="@id/lbl_location"
+                    android:text="Tags:"
+                    android:textSize="18dp"
+                    android:textStyle="bold"/>
+
+                <TextView
                     android:id="@+id/lbl_Descrip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/txt_organization"
+                    android:layout_below="@id/txt_tags"
                     android:layout_alignBaseline="@id/txt_description"
                     android:layout_alignLeft="@id/lbl_location"
                     android:text="Description:"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/lbl_webLink"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/lbl_Descrip"
+                    android:layout_alignLeft="@id/lbl_Descrip"
+                    android:layout_alignBaseline="@id/txt_webLink"
+                    android:text="Link:"
                     android:textSize="18dp"
                     android:textStyle="bold" />
 
@@ -164,25 +186,26 @@
                     android:textSize="18dp" />
 
                 <TextView
-                    android:id="@+id/txt_description"
+                    android:id="@+id/txt_tags"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/txt_organization"
+                    android:layout_alignLeft="@id/txt_location"
+                    android:layout_marginRight="10dp"
+                    android:text="Here are some tags"
+                    android:textSize="18dp"/>
+
+                <TextView
+                    android:id="@+id/txt_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/txt_tags"
                     android:layout_alignLeft="@id/txt_location"
                     android:layout_marginRight="10dp"
                     android:layout_marginBottom="5dp"
                     android:text="Description"
                     android:textSize="18dp" />
 
-                <TextView
-                    android:id="@+id/lbl_webLink"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/lbl_Descrip"
-                    android:layout_alignLeft="@id/lbl_Descrip"
-                    android:text="Link:"
-                    android:textSize="18dp"
-                    android:textStyle="bold" />
             </RelativeLayout>
 
             <View

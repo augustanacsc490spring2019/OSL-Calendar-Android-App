@@ -337,7 +337,7 @@ public class FindEvents extends AppCompatActivity {
                 //searchBar.setVisibility(View.GONE);
                 eventsView.setVisibility(View.GONE);
                 dateToolbar.setVisibility(View.GONE);
-                startThemeListener();
+                //startThemeListener();
                 return true;
         }
         return true;
@@ -354,7 +354,7 @@ public class FindEvents extends AppCompatActivity {
     }
 
     public void startThemeListener(){
-        radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
+        //radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
         checkedRadioButton = (RadioButton) radioGroup.findViewById(radioGroup.getCheckedRadioButtonId());
         relative_layout = findViewById(R.id.settingsView);
         relLayout = findViewById(R.id.relLayout);
@@ -366,7 +366,7 @@ public class FindEvents extends AppCompatActivity {
                 RadioButton checkedRadioButton = (RadioButton)radioGroup.findViewById(checkedId);
                 // This will get the radiobutton that has changed in its check state
                 // This puts the value (true/false) into the variable
-               if(checkedRadioButton.getId() == radioGroup.findViewById(R.id.theme1).getId()) {
+               /*if(checkedRadioButton.getId() == radioGroup.findViewById(R.id.theme1).getId()) {
                    // If the radiobutton that has changed in check state is now checked...
                    Theme.whiteTheme();
                }else if(checkedRadioButton.getId() == radioGroup.findViewById(R.id.theme2).getId()){
@@ -395,13 +395,13 @@ public class FindEvents extends AppCompatActivity {
                 RadioButton theme4  = findViewById(R.id.theme4);
                 theme4.setTextColor(Theme.getTextColor());
                 RadioButton theme5 = findViewById(R.id.theme5);
-                theme5.setTextColor(Theme.getTextColor());
+                theme5.setTextColor(Theme.getTextColor());*/
                 BottomNavigationView navigation = findViewById(R.id.navigation);
                 navigation.setBackgroundColor(Theme.getButtonColor());
 
                 //ListView listOfEvents = findViewById(R.id.listViewEvents);
 
-                constraintLayout.setBackgroundColor(Theme.getBackgroundColor());
+                //constraintLayout.setBackgroundColor(Theme.getBackgroundColor());
                 relative_layout.setBackgroundColor(Theme.getBackgroundColor());
                 //relLayout.setBackgroundColor(Theme.getBackgroundColor());
 
