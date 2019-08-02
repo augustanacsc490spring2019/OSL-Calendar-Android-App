@@ -33,11 +33,11 @@
         <activity
             android:name="edu.augustana.osleventsandroid.GoogleSignInActivity"
             android:exported="true"
-            android:label="OSL Events"
+            android:label="Vike Life"
             android:screenOrientation="portrait">
         </activity>
         <activity android:name="edu.augustana.osleventsandroid.ForceUpdateActivity"
-            android:label="OSL Events">
+            android:label="Vike Life">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
