@@ -108,46 +108,51 @@ public class QrCodeScanner extends AppCompatActivity implements ZXingScannerView
         // we just want to extract the event ID out of it.
         String url = result.getText();
         Log.d("QRCodeScanner", "url" + url);
-        final String eventID = url.substring(url.lastIndexOf("id=") + 3, url.lastIndexOf("&name="));
+        if (url.contains("?")) {
+            final String eventID = url.substring(url.lastIndexOf("id=") + 3, url.lastIndexOf("&name="));
 
-        // below we read the official event name from the database,
-        // and if that's successful, then we add the user to the list of attendees in the DB
-        final DatabaseReference eventDBRef = FirebaseDatabase.getInstance().getReference("current-events/" + eventID);
-        eventDBRef.child("name").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    final String eventTitle = (String) snapshot.getValue();
-                    eventDBRef.child("users").child(user).setValue(true)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    String message = "You have checked into " + eventTitle + " as " + user;
-                                    displayConfirmationDialog("Checked In", message);
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.e("QRCodeScanner", "Database Write Error: " + e);
-                                    String message = "You were unable to check into " + eventTitle + ". Check your internet connection and try again.";
-                                    displayConfirmationDialog("Check In Failed", message);
-                                }
-                            });
-                } else {
-                    String message = "Sorry, this event is in the past or no longer exists!";
-                    displayConfirmationDialog("Check In Failed", message);
+            // below we read the official event name from the database,
+            // and if that's successful, then we add the user to the list of attendees in the DB
+            final DatabaseReference eventDBRef = FirebaseDatabase.getInstance().getReference("current-events/" + eventID);
+            eventDBRef.child("name").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        final String eventTitle = (String) snapshot.getValue();
+                        eventDBRef.child("users").child(user).setValue(true)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        String message = "You have checked into " + eventTitle + " as " + user;
+                                        displayConfirmationDialog("Checked In", message);
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.e("QRCodeScanner", "Database Write Error: " + e);
+                                        String message = "You were unable to check into " + eventTitle + ". Check your internet connection and try again.";
+                                        displayConfirmationDialog("Check In Failed", message);
+                                    }
+                                });
+                    } else {
+                        String message = "Sorry, this event is in the past or no longer exists!";
+                        displayConfirmationDialog("Check In Failed", message);
+                    }
+
                 }
 
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("QRCodeScanner", "Database Read Error: " + databaseError);
-                String message = "We were unable to access this event. Check your internet connection and try again.";
-                displayConfirmationDialog("Database Error", message);
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.e("QRCodeScanner", "Database Read Error: " + databaseError);
+                    String message = "We were unable to access this event. Check your internet connection and try again.";
+                    displayConfirmationDialog("Database Error", message);
+                }
+            });
+        } else {
+            String message = "This is not a QR Code for an Augustana Event.";
+            displayConfirmationDialog("Invalid QR", message);
+        }
     }
 
     private void displayConfirmationDialog(String dialogTitle, String dialogMessage) {
