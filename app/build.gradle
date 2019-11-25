@@ -1,13 +1,21 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        release1 {
+            storeFile file('/Users/checkout/Documents/keychain/my_private_key.jks')
+            storePassword 'password'
+            keyAlias = 'key0'
+            keyPassword 'AARDVARK&&aardvark'
+        }
+    }
     compileSdkVersion 28
     defaultConfig {
         applicationId "edu.augustana.osleventsandroid"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 3
-        versionName "0.9"
+        versionCode 6
+        versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -15,6 +23,11 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            debuggable = true
+            signingConfig signingConfigs.release1
+        }
+        debug {
+            signingConfig signingConfigs.debug
         }
     }
 }
@@ -45,6 +58,7 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:28.0.0'
     implementation 'com.firebaseui:firebase-ui-database:5.0.0'
     implementation 'android.arch.paging:runtime:1.0.1'
+    implementation 'androidmads.library.qrgenearator:QRGenearator:1.0.3'
 
 }
 

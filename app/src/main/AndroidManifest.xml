@@ -55,6 +55,10 @@
             android:name="edu.augustana.osleventsandroid.AboutPageActivity"
             android:label="About">
         </activity>
+        <activity
+            android:name="edu.augustana.osleventsandroid.MyIDActivity"
+            android:label="My ID">
+        </activity>
     </application>
 
 </manifest>

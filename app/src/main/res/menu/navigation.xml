@@ -16,4 +16,9 @@
         android:icon="@drawable/qr_reader"
         android:title="@string/title_scan" />
 
+    <item
+        android:id="@+id/navigation_myID"
+        android:icon="@drawable/my_id"
+        android:title="@string/title_my_id"/>
+
 </menu>

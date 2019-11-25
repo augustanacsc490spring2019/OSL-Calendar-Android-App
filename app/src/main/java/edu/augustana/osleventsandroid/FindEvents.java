@@ -5,6 +5,7 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -41,14 +43,19 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.zxing.WriterException;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+
+import androidmads.library.qrgenearator.QRGContents;
+import androidmads.library.qrgenearator.QRGEncoder;
 
 public class FindEvents extends AppCompatActivity {
 
     final int QRCODE = 0;
     private RelativeLayout settingsView;
+    private RelativeLayout myIDView;
     private BottomNavigationView navigation;
     private ArrayList<Event> events;
     private ArrayList<Event> filteredEvents = new ArrayList<>();
@@ -70,6 +77,9 @@ public class FindEvents extends AppCompatActivity {
     private Calendar todayDate;
     private MyEventsFilter favoriteEventsFilter;
     private SearchMultiFieldFilter searchFilter;
+    private ImageView qrImage;
+    private Bitmap bitmap;
+    private QRGEncoder qrgEncoder;
 
 
     private RecyclerView eventsView;
@@ -95,6 +105,14 @@ public class FindEvents extends AppCompatActivity {
                     dateToolbar.setVisibility(View.GONE);
                     filter();
                     return true;
+                case R.id.navigation_myID:
+                    settingsView.setVisibility(View.GONE);
+                    //eventslv.setVisibility(View.VISIBLE);
+                    searchBar.setVisibility(View.GONE);
+                    eventsView.setVisibility(View.GONE);
+                    dateToolbar.setVisibility(View.GONE);
+                    myIDView.setVisibility(View.VISIBLE);
+
             }
             return false;
         }
@@ -118,6 +136,7 @@ public class FindEvents extends AppCompatActivity {
             //to enable optimization of Recycler View
             eventsView.setHasFixedSize(true);
         }
+        myIDView = findViewById(R.id.myIDView);
         gridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
         LinearLayoutManager linearManager = new LinearLayoutManager(FindEvents.this, LinearLayoutManager.VERTICAL, false);
         eventsView.setLayoutManager(gridLayoutManager);
@@ -153,6 +172,15 @@ public class FindEvents extends AppCompatActivity {
         String user = userEmail.substring(0, userEmail.indexOf('@'));
         favoriteEventsFilter = new MyEventsFilter(user);
         searchFilter = new SearchMultiFieldFilter("");
+
+        qrImage = (ImageView) findViewById(R.id.idQRImage);
+        qrgEncoder = new QRGEncoder(user, null, QRGContents.Type.TEXT, qrImage.getWidth());
+        try {
+            bitmap = qrgEncoder.encodeAsBitmap();
+        } catch (WriterException e){
+            Log.d("QR Code Generator", e.toString());
+        }
+        qrImage.setImageBitmap(bitmap);
 
         Log.d("FindEvents", "OnCreate finished");
     }

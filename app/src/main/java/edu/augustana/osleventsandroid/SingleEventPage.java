@@ -138,12 +138,59 @@ public class SingleEventPage extends AppCompatActivity {
         if (favoriteCheckBox.isChecked()) {
             //Currently changing this event has no effect since it is just a deserialized copy
             // of the original event, AND all the events get recreated from Firebase anyway?
-            event.getFavoritedBy().put(user,true);
-            database.child(event.getEventID()).child("favoritedBy").child(user).setValue(true);
+            database.child(event.getEventID()).child("name").addListenerForSingleValueEvent(new ValueEventListener() {
+
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        event.getFavoritedBy().put(user,true);
+                        database.child(event.getEventID()).child("favoritedBy").child(user).setValue(true);
+                    } else {
+                        String dialogTitle = "Event No Longer Exists";
+                        String dialogMessage = "This event no longer exists, and can no longer be favorited or unfavorited. You will now be redirected to the All Events page.";
+                        displayErrorDialog(dialogTitle , dialogMessage);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {}
+            });
         } else {
-            event.getFavoritedBy().remove(user);
-            database.child(event.getEventID()).child("favoritedBy").child(user).removeValue();
+            database.child(event.getEventID()).child("name").addListenerForSingleValueEvent(new ValueEventListener() {
+
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        event.getFavoritedBy().remove(user);
+                        database.child(event.getEventID()).child("favoritedBy").child(user).removeValue();
+                    } else {
+                        String dialogTitle = "Event No Longer Exists";
+                        String dialogMessage = "This event no longer exists, and can no longer be favorited or unfavorited. You will now be redirected to the All Events page.";
+                        displayErrorDialog(dialogTitle , dialogMessage);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {}
+            });
         }
+    }
+
+    private void displayErrorDialog(String dialogTitle, String dialogMessage) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        builder.setTitle(dialogTitle);
+        builder.setMessage(dialogMessage);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(SingleEventPage.this, FindEvents.class);
+                startActivity(intent);
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     //Add the event to the user's google calendar
